@@ -112,17 +112,17 @@ public class SemSyncService {
         var snapshot = new PowerflowSnapshot();
         snapshot.setPowerStation(station);
         snapshot.setPowerflowTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
-        snapshot.setPvW(asBigDecimal(powerflowNode.path("pv_W")));
-        snapshot.setBatteryW(asBigDecimal(powerflowNode.path("battery_W")));
-        snapshot.setLoadW(asBigDecimal(powerflowNode.path("load_W")));
-        snapshot.setGridW(asBigDecimal(powerflowNode.path("grid_W")));
-        snapshot.setGensetW(asBigDecimal(powerflowNode.path("genset_W")));
-        snapshot.setMicrogridW(asBigDecimal(powerflowNode.path("microgrid_W")));
-        snapshot.setSocPercent(asBigDecimal(powerflowNode.path("soc_percent")));
-        snapshot.setPvStatus(powerflowNode.path("pv_status").asText(null));
-        snapshot.setBatteryStatus(powerflowNode.path("battery_status").asText(null));
-        snapshot.setLoadStatus(powerflowNode.path("load_status").asText(null));
-        snapshot.setGridStatus(powerflowNode.path("grid_status").asText(null));
+        snapshot.setPvW(asBigDecimal(powerflowNode.path("pv")));
+        snapshot.setBatteryW(asBigDecimal(powerflowNode.path("bettery")));
+        snapshot.setLoadW(asBigDecimal(powerflowNode.path("load")));
+        snapshot.setGridW(asBigDecimal(powerflowNode.path("grid")));
+        snapshot.setGensetW(asBigDecimal(powerflowNode.path("genset")));
+        snapshot.setMicrogridW(asBigDecimal(powerflowNode.path("microgrid")));
+        snapshot.setSocPercent(asBigDecimal(powerflowNode.path("soc")));
+        snapshot.setPvStatus(powerflowNode.path("pvStatus").asText(null));
+        snapshot.setBatteryStatus(powerflowNode.path("betteryStatus").asText(null));
+        snapshot.setLoadStatus(powerflowNode.path("loadStatus").asText(null));
+        snapshot.setGridStatus(powerflowNode.path("gridStatus").asText(null));
         powerflowSnapshotRepository.save(snapshot);
     }
 

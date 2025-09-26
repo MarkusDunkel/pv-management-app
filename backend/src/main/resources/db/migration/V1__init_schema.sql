@@ -1,13 +1,13 @@
-CREATE TABLE owner (
-    owner_id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255),
-    phone VARCHAR(64),
-    email VARCHAR(255)
-);
+--CREATE TABLE owner (
+--    owner_id BIGSERIAL PRIMARY KEY,
+--    name VARCHAR(255),
+--    phone VARCHAR(64),
+--    email VARCHAR(255)
+--);
 
 CREATE TABLE powerstation (
     powerstation_id BIGSERIAL PRIMARY KEY,
-    owner_id BIGSERIAL REFERENCES owner(owner_id),
+--    owner_id BIGSERIAL REFERENCES owner(owner_id),
     stationname VARCHAR(255) UNIQUE NOT NULL,
     address TEXT,
     latitude DOUBLE PRECISION,
