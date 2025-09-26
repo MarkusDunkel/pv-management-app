@@ -10,9 +10,9 @@ public record CurrentMeasurementsDto(
         BigDecimal batteryPowerW,
         BigDecimal loadPowerW,
         BigDecimal gridPowerW,
-        BigDecimal stateOfCharge,
-        List<InverterStatusDto> inverters,
-        KpiSnapshotDto kpi
+        BigDecimal stateOfCharge
+//        List<InverterStatusDto> inverters,
+//        KpiSnapshotDto kpi
 ) {
     public record InverterStatusDto(
             String serialNumber,

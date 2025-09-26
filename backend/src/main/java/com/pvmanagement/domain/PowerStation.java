@@ -31,20 +31,43 @@ public class PowerStation {
     private String address;
     private Double latitude;
     private Double longitude;
+
+    @Column(name = "capacity_k_wp")
     private Double capacityKWp;
+
+    @Column(name = "battery_capacity_k_wh")
     private Double batteryCapacityKWh;
+
+    @Column(name = "powerstation_type")
     private String powerstationType;
+
     private String status;
+
+    @Column(name = "turnon_time")
     private OffsetDateTime turnonTime;
+
+    @Column(name = "create_time")
     private OffsetDateTime createTime;
+
+    @Column(name = "org_code")
     private String orgCode;
+
+    @Column(name = "org_name")
     private String orgName;
+
+    @Column(name = "is_stored")
     private Boolean isStored;
+
+    @Column(name = "is_powerflow")
     private Boolean isPowerflow;
+
+    @Column(name = "charts_type")
     private String chartsType;
+
+    @Column(name = "time_span")
     private String timeSpan;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private Owner owner;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "owner_id")
+//    private Owner owner;
 }

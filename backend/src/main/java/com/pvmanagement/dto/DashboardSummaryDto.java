@@ -4,7 +4,7 @@ import java.util.List;
 
 public record DashboardSummaryDto(
         PowerStationDto powerStation,
-        CurrentMeasurementsDto currentMeasurements,
-        List<WeatherForecastDto> forecast
+        CurrentMeasurementsDto currentMeasurements
+//        List<WeatherForecastDto> forecast
 ) {
 }

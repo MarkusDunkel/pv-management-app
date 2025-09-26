@@ -5,9 +5,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public record HistoryResponseDto(
-        List<DataPoint> powerflow,
-        List<InverterPoint> inverter,
-        List<KpiPoint> dailyKpi
+        List<DataPoint> powerflow
+//        List<InverterPoint> inverter,
+//        List<KpiPoint> dailyKpi
 ) {
     public record DataPoint(OffsetDateTime timestamp,
                              BigDecimal pvW,

@@ -1,13 +1,14 @@
 package com.pvmanagement.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.pvmanagement.domain.Inverter;
-import com.pvmanagement.domain.KpiDaily;
+//import com.pvmanagement.domain.Inverter;
+//import com.pvmanagement.domain.KpiDaily;
+//import com.pvmanagement.domain.PowerStation;
 import com.pvmanagement.domain.PowerStation;
 import com.pvmanagement.domain.PowerflowSnapshot;
 import com.pvmanagement.domain.SemSyncLog;
-import com.pvmanagement.repository.InverterRepository;
-import com.pvmanagement.repository.KpiDailyRepository;
+//import com.pvmanagement.repository.InverterRepository;
+//import com.pvmanagement.repository.KpiDailyRepository;
 import com.pvmanagement.repository.PowerStationRepository;
 import com.pvmanagement.repository.PowerflowSnapshotRepository;
 import com.pvmanagement.repository.SemSyncLogRepository;
@@ -32,21 +33,21 @@ public class SemSyncService {
     private final SemsClient semsClient;
     private final PowerStationRepository powerStationRepository;
     private final PowerflowSnapshotRepository powerflowSnapshotRepository;
-    private final KpiDailyRepository kpiDailyRepository;
-    private final InverterRepository inverterRepository;
+//    private final KpiDailyRepository kpiDailyRepository;
+//    private final InverterRepository inverterRepository;
     private final SemSyncLogRepository semSyncLogRepository;
 
     public SemSyncService(SemsClient semsClient,
                           PowerStationRepository powerStationRepository,
                           PowerflowSnapshotRepository powerflowSnapshotRepository,
-                          KpiDailyRepository kpiDailyRepository,
-                          InverterRepository inverterRepository,
+//                          KpiDailyRepository kpiDailyRepository,
+//                          InverterRepository inverterRepository,
                           SemSyncLogRepository semSyncLogRepository) {
         this.semsClient = semsClient;
         this.powerStationRepository = powerStationRepository;
         this.powerflowSnapshotRepository = powerflowSnapshotRepository;
-        this.kpiDailyRepository = kpiDailyRepository;
-        this.inverterRepository = inverterRepository;
+//        this.kpiDailyRepository = kpiDailyRepository;
+//        this.inverterRepository = inverterRepository;
         this.semSyncLogRepository = semSyncLogRepository;
     }
 
@@ -63,8 +64,8 @@ public class SemSyncService {
             var stationNode = data.path("stationData");
             station = persistPowerStation(stationNode);
             persistPowerflowSnapshot(station, data.path("powerflow"));
-            persistKpi(station, data.path("kpi"));
-            persistInverters(station, data.path("inverter"));
+//            persistKpi(station, data.path("kpi"));
+//            persistInverters(station, data.path("inverter"));
             recordSync(station, "SUCCESS", null);
         } catch (Exception ex) {
             log.error("SEMS sync failed", ex);
@@ -108,7 +109,7 @@ public class SemSyncService {
         }
         var snapshot = new PowerflowSnapshot();
         snapshot.setPowerStation(station);
-        snapshot.setTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        snapshot.setPowerflowTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
         snapshot.setPvW(asBigDecimal(powerflowNode.path("pv_W")));
         snapshot.setBatteryW(asBigDecimal(powerflowNode.path("battery_W")));
         snapshot.setLoadW(asBigDecimal(powerflowNode.path("load_W")));
@@ -123,55 +124,55 @@ public class SemSyncService {
         powerflowSnapshotRepository.save(snapshot);
     }
 
-    private void persistKpi(PowerStation station, JsonNode kpiNode) {
-        if (kpiNode.isMissingNode()) {
-            return;
-        }
-        var today = java.time.LocalDate.now();
-        var daily = kpiDailyRepository.findByPowerStationAndKpiDate(station, today)
-                .orElseGet(() -> {
-                    var entity = new KpiDaily();
-                    entity.setPowerStation(station);
-                    entity.setKpiDate(today);
-                    return entity;
-                });
+//    private void persistKpi(PowerStation station, JsonNode kpiNode) {
+//        if (kpiNode.isMissingNode()) {
+//            return;
+//        }
+//        var today = java.time.LocalDate.now();
+//        var daily = kpiDailyRepository.findByPowerStationAndKpiDate(station, today)
+//                .orElseGet(() -> {
+//                    var entity = new KpiDaily();
+//                    entity.setPowerStation(station);
+//                    entity.setKpiDate(today);
+//                    return entity;
+//                });
+//
+//        daily.setMonthGenerationKWh(asBigDecimal(kpiNode.path("month_generation_kWh")));
+//        daily.setPowerKWh(asBigDecimal(kpiNode.path("power_kWh")));
+//        daily.setTotalPowerKWh(asBigDecimal(kpiNode.path("total_power_kWh")));
+//        daily.setPacW(asBigDecimal(kpiNode.path("pac_W")));
+//        daily.setYieldRate(asBigDecimal(kpiNode.path("yield_rate")));
+//        daily.setDayIncomeEur(asBigDecimal(kpiNode.path("day_income_EUR")));
+//        daily.setTotalIncomeEur(asBigDecimal(kpiNode.path("total_income_EUR")));
+//        kpiDailyRepository.save(daily);
+//    }
 
-        daily.setMonthGenerationKWh(asBigDecimal(kpiNode.path("month_generation_kWh")));
-        daily.setPowerKWh(asBigDecimal(kpiNode.path("power_kWh")));
-        daily.setTotalPowerKWh(asBigDecimal(kpiNode.path("total_power_kWh")));
-        daily.setPacW(asBigDecimal(kpiNode.path("pac_W")));
-        daily.setYieldRate(asBigDecimal(kpiNode.path("yield_rate")));
-        daily.setDayIncomeEur(asBigDecimal(kpiNode.path("day_income_EUR")));
-        daily.setTotalIncomeEur(asBigDecimal(kpiNode.path("total_income_EUR")));
-        kpiDailyRepository.save(daily);
-    }
-
-    private void persistInverters(PowerStation station, JsonNode invertersNode) {
-        if (invertersNode.isMissingNode() || !invertersNode.isArray()) {
-            return;
-        }
-        Iterator<JsonNode> iterator = invertersNode.elements();
-        while (iterator.hasNext()) {
-            JsonNode node = iterator.next();
-            String sn = node.path("sn").asText(null);
-            if (sn == null) {
-                continue;
-            }
-            Inverter inverter = inverterRepository.findById(sn).orElseGet(Inverter::new);
-            inverter.setSerialNumber(sn);
-            inverter.setPowerStation(station);
-            inverter.setRelationId(node.path("relation_id").asText(null));
-            inverter.setName(node.path("name").asText(null));
-            inverter.setStatus(node.path("status").asText(null));
-            inverter.setPacW(asDouble(node.path("pac_W")));
-            inverter.setEtotalKWh(asDouble(node.path("etotal_kWh")));
-            inverter.setEdayKWh(asDouble(node.path("eday_kWh")));
-            inverter.setTemperatureC(asDouble(node.path("temperature_C")));
-            inverter.setSocPercent(asDouble(node.path("soc_percent")));
-            inverter.setSohPercent(asDouble(node.path("soh_percent")));
-            inverterRepository.save(inverter);
-        }
-    }
+//    private void persistInverters(PowerStation station, JsonNode invertersNode) {
+//        if (invertersNode.isMissingNode() || !invertersNode.isArray()) {
+//            return;
+//        }
+//        Iterator<JsonNode> iterator = invertersNode.elements();
+//        while (iterator.hasNext()) {
+//            JsonNode node = iterator.next();
+//            String sn = node.path("sn").asText(null);
+//            if (sn == null) {
+//                continue;
+//            }
+//            Inverter inverter = inverterRepository.findById(sn).orElseGet(Inverter::new);
+//            inverter.setSerialNumber(sn);
+//            inverter.setPowerStation(station);
+//            inverter.setRelationId(node.path("relation_id").asText(null));
+//            inverter.setName(node.path("name").asText(null));
+//            inverter.setStatus(node.path("status").asText(null));
+//            inverter.setPacW(asDouble(node.path("pac_W")));
+//            inverter.setEtotalKWh(asDouble(node.path("etotal_kWh")));
+//            inverter.setEdayKWh(asDouble(node.path("eday_kWh")));
+//            inverter.setTemperatureC(asDouble(node.path("temperature_C")));
+//            inverter.setSocPercent(asDouble(node.path("soc_percent")));
+//            inverter.setSohPercent(asDouble(node.path("soh_percent")));
+//            inverterRepository.save(inverter);
+//        }
+//    }
 
     private void handleSyncFailure(Exception ex) {
         log.error("SEMS sync failed after retries", ex);
