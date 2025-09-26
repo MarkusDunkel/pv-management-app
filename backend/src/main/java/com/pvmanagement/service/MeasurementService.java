@@ -4,16 +4,12 @@ import com.pvmanagement.domain.PowerStation;
 import com.pvmanagement.dto.CurrentMeasurementsDto;
 import com.pvmanagement.dto.HistoryRequestDto;
 import com.pvmanagement.dto.HistoryResponseDto;
-//import com.pvmanagement.repository.InverterMeasurementRepository;
-//import com.pvmanagement.repository.InverterRepository;
-//import com.pvmanagement.repository.KpiDailyRepository;
 import com.pvmanagement.repository.PowerStationRepository;
 import com.pvmanagement.repository.PowerflowSnapshotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 
 @Service
 @Transactional(readOnly = true)
@@ -88,7 +84,7 @@ public class MeasurementService {
         OffsetDateTime to = request.to();
 
         var powerflow = powerflowSnapshotRepository
-                .findByPowerStationAndTimestampBetweenOrderByPowerflowTimestampAsc(station, from, to)
+                .findByPowerStationAndPowerflowTimestampBetweenOrderByPowerflowTimestampAsc(station, from, to)
                 .stream()
                 .map(snap -> new HistoryResponseDto.DataPoint(
                         snap.getPowerflowTimestamp(),
