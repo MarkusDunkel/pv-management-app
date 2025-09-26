@@ -26,6 +26,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class SemSyncService {
@@ -190,11 +192,38 @@ public class SemSyncService {
         semSyncLogRepository.save(logEntry);
     }
 
-    private BigDecimal asBigDecimal(JsonNode node) {
-        if (node == null || node.isMissingNode() || !node.isNumber()) {
-            return null;
+    private static final Pattern FIRST_NUMBER =
+            Pattern.compile("[-+]?\\d{1,3}(?:[\\d.,]*\\d)?");
+
+    public static BigDecimal asBigDecimal(JsonNode node) {
+        if (node == null || node.isNull()) return null;
+
+        if (node.isNumber()) {
+            return node.decimalValue();
         }
-        return node.decimalValue();
+
+        String text = node.asText(null);
+        if (text == null || text.isBlank()) return null;
+
+        Matcher m = FIRST_NUMBER.matcher(text);
+        if (!m.find()) return null;
+
+        String num = m.group(); // e.g. "1766.08", "1,766.08", "1766,08"
+
+        // Normalize separators:
+        boolean hasDot = num.indexOf('.') >= 0;
+        boolean hasComma = num.indexOf(',') >= 0;
+
+        if (hasDot && hasComma) {
+            // Assume comma is thousands separator, dot is decimal: "1,766.08" -> "1766.08"
+            num = num.replace(",", "");
+        } else if (hasComma) {
+            // Assume comma is decimal separator: "1766,08" -> "1766.08"
+            num = num.replace(',', '.');
+        }
+        // else only dot or neither: leave as-is
+
+        return new BigDecimal(num);
     }
 
     private Double asDouble(JsonNode node) {
