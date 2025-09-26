@@ -50,8 +50,7 @@ public class PowerStationService {
     public DashboardSummaryDto buildDashboard(Long powerStationId) {
         var station = powerStationRepository.findById(powerStationId)
                 .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
-
-        var snapshot = powerflowSnapshotRepository.findFirstByPowerStationOrderByTimestampDesc(station);
+        var snapshot = powerflowSnapshotRepository.findFirstByPowerStationOrderByPowerflowTimestampDesc(station);
 //        var kpi = kpiDailyRepository.findByPowerStationOrderByKpiDateDesc(station).stream().findFirst();
 //        var inverters = inverterRepository.findByPowerStation(station);
 

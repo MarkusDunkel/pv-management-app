@@ -42,7 +42,7 @@ public class MeasurementService {
         PowerStation station = powerStationRepository.findById(powerStationId)
                 .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
 
-        var snapshot = powerflowSnapshotRepository.findFirstByPowerStationOrderByTimestampDesc(station)
+        var snapshot = powerflowSnapshotRepository.findFirstByPowerStationOrderByPowerflowTimestampDesc(station)
                 .orElse(null);
 
         if (snapshot == null) {
@@ -88,7 +88,7 @@ public class MeasurementService {
         OffsetDateTime to = request.to();
 
         var powerflow = powerflowSnapshotRepository
-                .findByPowerStationAndTimestampBetweenOrderByTimestampAsc(station, from, to)
+                .findByPowerStationAndTimestampBetweenOrderByPowerflowTimestampAsc(station, from, to)
                 .stream()
                 .map(snap -> new HistoryResponseDto.DataPoint(
                         snap.getPowerflowTimestamp(),

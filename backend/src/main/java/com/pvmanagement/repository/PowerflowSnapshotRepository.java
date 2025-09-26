@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PowerflowSnapshotRepository extends JpaRepository<PowerflowSnapshot, Long> {
-    Optional<PowerflowSnapshot> findFirstByPowerStationOrderByTimestampDesc(PowerStation powerStation);
-    List<PowerflowSnapshot> findByPowerStationAndTimestampBetweenOrderByTimestampAsc(PowerStation powerStation,
+    Optional<PowerflowSnapshot> findFirstByPowerStationOrderByPowerflowTimestampDesc(PowerStation powerStation);
+    List<PowerflowSnapshot> findByPowerStationAndTimestampBetweenOrderByPowerflowTimestampAsc(PowerStation powerStation,
                                                                                    OffsetDateTime from,
                                                                                    OffsetDateTime to);
 }
