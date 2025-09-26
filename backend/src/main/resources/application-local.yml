@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pv_management
+    username: pv_app
+    password: pv_app
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    com.pvmanagement: DEBUG

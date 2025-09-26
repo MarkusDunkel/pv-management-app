@@ -1,0 +1,17 @@
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+.card {
+  padding: 1.5rem;
+  border-radius: vars.$radius-lg;
+  background-color: vars.$color-surface;
+  border: 1px solid vars.$color-border;
+  @include mixins.card-shadow;
+}
+
+.card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,53 @@
+{
+  "data": {
+    "stationData": {
+      "stationname": "Home PV",
+      "address": "123 Main Street",
+      "latitude": 52.52,
+      "longitude": 13.405,
+      "capacity_kWp": 6.6,
+      "battery_capacity_kWh": 10.0,
+      "status": "Online",
+      "org_name": "Household",
+      "org_code": "H001",
+      "charts_type": "powerflow",
+      "time_span": "day",
+      "is_powerflow": true,
+      "is_stored": true,
+      "turnon_time": "2023-04-01T08:00:00Z",
+      "create_time": "2023-03-15T12:00:00Z"
+    },
+    "powerflow": {
+      "pv_W": 4200.0,
+      "pv_status": "Generating",
+      "battery_W": -500.0,
+      "battery_status": "Charging",
+      "load_W": 3700.0,
+      "load_status": "Normal",
+      "grid_W": 0.0,
+      "grid_status": "Idle",
+      "soc_percent": 68.5
+    },
+    "kpi": {
+      "power_kWh": 22.4,
+      "total_power_kWh": 10500.3,
+      "pac_W": 4200.0,
+      "yield_rate": 0.82,
+      "day_income_EUR": 5.4,
+      "total_income_EUR": 1240.5
+    },
+    "inverter": [
+      {
+        "sn": "INV123456",
+        "name": "Hybrid Inverter",
+        "status": "Normal",
+        "pac_W": 4100.0,
+        "etotal_kWh": 9500.1,
+        "eday_kWh": 20.2,
+        "temperature_C": 38.5,
+        "soc_percent": 70.0,
+        "soh_percent": 98.0
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+logging:
+  level:
+    root: INFO

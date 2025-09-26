@@ -1,0 +1,106 @@
+@use '@/styles/abstracts/variables' as vars;
+
+.historyShell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filterCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filterForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: end;
+
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    color: vars.$color-text;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: vars.$radius-md;
+    border: 1px solid vars.$color-border;
+    font-size: 0.95rem;
+  }
+}
+
+.resultsCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.resultsHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kpiStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+
+  article {
+    padding: 1rem;
+    border-radius: vars.$radius-md;
+    background: rgba(14, 165, 233, 0.12);
+
+    span {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: vars.$color-text-muted;
+    }
+
+    strong {
+      display: block;
+      font-size: 1.125rem;
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timelineRow {
+  display: grid;
+  grid-template-columns: 180px 1fr 80px;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.timelineBars {
+  height: 8px;
+  border-radius: vars.$radius-full;
+  background: rgba(148, 163, 184, 0.24);
+  overflow: hidden;
+
+  div {
+    height: 100%;
+    background: vars.$color-primary;
+  }
+}
+
+.error {
+  padding: 0.75rem 1rem;
+  border-radius: vars.$radius-md;
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}

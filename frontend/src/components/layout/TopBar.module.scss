@@ -1,0 +1,62 @@
+@use '@/styles/abstracts/variables' as vars;
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background-color: vars.$color-surface;
+  border-bottom: 1px solid vars.$color-border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  h1 {
+    font-size: 1.375rem;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    color: vars.$color-text-muted;
+    font-size: 0.875rem;
+  }
+}
+
+.userChip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: vars.$radius-lg;
+  background: vars.$color-chip;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: vars.$color-primary;
+  color: vars.$color-on-primary;
+  font-weight: 600;
+}
+
+.name {
+  display: block;
+  font-weight: 600;
+}
+
+.email {
+  display: block;
+  font-size: 0.75rem;
+  color: vars.$color-text-muted;
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,119 @@
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+.heroCard {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  border-radius: vars.$radius-lg;
+  background: linear-gradient(135deg, rgba(vars.$color-primary-rgb, 0.12), #ffffff);
+  border: 1px solid vars.$color-border;
+  @include mixins.card-shadow;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.statGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: vars.$radius-lg;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: vars.$color-text-muted;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.chartCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.socDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.socValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: vars.$color-primary;
+}
+
+.forecastGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.forecastItem {
+  padding: 1rem;
+  border-radius: vars.$radius-md;
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.forecastDate {
+  display: block;
+  font-size: 0.75rem;
+  color: vars.$color-text-muted;
+  margin-bottom: 0.5rem;
+}
+
+.forecastTemps {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.impactRow {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.impactIcon {
+  color: #22c55e;
+}
+
+.impactHeadline {
+  font-weight: 600;
+  color: vars.$color-text;
+}
+
+.accentSolar {
+  border-left: 4px solid #f59e0b;
+}
+
+.accentBattery {
+  border-left: 4px solid #22c55e;
+}
+
+.accentGrid {
+  border-left: 4px solid #ef4444;
+}
+
+.accentLoad {
+  border-left: 4px solid #0ea5e9;
+}
+
+@media (max-width: 768px) {
+  .heroCard {
+    padding: 1.5rem;
+  }
+}
