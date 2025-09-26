@@ -21,8 +21,10 @@ import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
 @Service
@@ -61,7 +63,7 @@ public class SemSyncService {
             if (data.isMissingNode()) {
                 throw new IllegalStateException("SEMS response missing data node");
             }
-            var stationNode = data.path("stationData");
+            var stationNode = data.path("info");
             station = persistPowerStation(stationNode);
             persistPowerflowSnapshot(station, data.path("powerflow"));
 //            persistKpi(station, data.path("kpi"));
@@ -206,6 +208,13 @@ public class SemSyncService {
         if (value == null || value.isBlank()) {
             return null;
         }
-        return OffsetDateTime.parse(value);
+
+        DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//        return OffsetDateTime.parse(value, formatter);
+        LocalDateTime ldt = LocalDateTime.parse(value.trim(),
+                                                FMT);
+        // Attach a zero offset (UTC)
+        return ldt.atOffset(ZoneOffset.UTC);
     }
 }

@@ -30,6 +30,8 @@ logging:
   level:
     root: INFO
     com.pvmanagement: DEBUG
+    org.springframework.security: DEBUG
+    com.pvmanagement.security: DEBUG
 
 app:
   jwt:
