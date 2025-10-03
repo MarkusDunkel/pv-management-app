@@ -162,7 +162,7 @@ public class SemSyncService {
 //            if (sn == null) {
 //                continue;
 //            }
-//            Inverter inverter = inverterRepository.findById(sn).orElseGet(Inverter::new);
+//            Inverter inverter = inverterRepository.findById(sn).orElseGet(Inverter::new)
 //            inverter.setSerialNumber(sn);
 //            inverter.setPowerStation(station);
 //            inverter.setRelationId(node.path("relation_id").asText(null));
