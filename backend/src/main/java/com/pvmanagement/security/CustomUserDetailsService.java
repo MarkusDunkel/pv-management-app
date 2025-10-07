@@ -20,12 +20,20 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userAccountRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        var authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .toList();
+        var authorities = user.getRoles()
+                              .stream()
+                              .map(role -> new SimpleGrantedAuthority(role.getName()
+                                                                          .name()))
+                              .toList();
 
-        return new User(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, authorities);
+        return new User(user.getEmail(),
+                        user.getPassword(),
+                        user.isEnabled(),
+                        true,
+                        true,
+                        true,
+                        authorities);
     }
 }

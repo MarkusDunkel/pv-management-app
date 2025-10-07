@@ -24,15 +24,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**", "/api/auth/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/sems/sync").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(csrf -> csrf.disable())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**",
+                                                                "/api/auth/**",
+                                                                "/v3/api-docs/**",
+                                                                "/swagger-ui.html",
+                                                                "/swagger-ui/**")
+                                               .permitAll()
+                                               .requestMatchers("/api/sems/sync")
+                                               .hasRole("ADMIN")
+                                               .anyRequest()
+                                               .authenticated())
+            .addFilterBefore(jwtAuthenticationFilter,
+                             UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
