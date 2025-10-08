@@ -1,25 +1,25 @@
+version: "3.9"
+
 services:
-  postgres:
+  db:
     image: postgres:15
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME:-pv_management}
       POSTGRES_USER: ${DB_USERNAME:-pv_app}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-pv_app}
-    ports:
-      - "${DB_PORT:-5432}:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
+      - /mnt/db/postgres:/var/lib/postgresql/data
+    networks:
+      - appnet
 
   backend:
-    build:
-      context: ./backend
+    image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+    restart: unless-stopped
+    depends_on:
+      - db
     environment:
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_NAME}
       SPRING_PROFILES_ACTIVE: local
       DB_HOST: postgres
       DB_PORT: 5432
@@ -34,20 +34,22 @@ services:
       APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-super-secret-password}
     ports:
       - "8080:8080"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
+    networks:
+      - appnet
 
   frontend:
-    build:
-      context: ./frontend
-    environment:
-      VITE_API_BASE_URL: http://backend:8080
-    ports:
-      - "5173:80"
+    image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/frontend:latest
+    restart: unless-stopped
     depends_on:
       - backend
+    environment:
+      # Often FE is static; if using Nginx, point it to backend URL:
+      API_URL: "http://localhost:8080"
+    ports:
+      - "80:80"
+    networks:
+      - appnet
 
-volumes:
-  postgres-data:
+networks:
+  appnet:
+    driver: bridge
