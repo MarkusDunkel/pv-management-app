@@ -8,7 +8,7 @@ A full-stack application for monitoring photovoltaic (PV) production, battery be
 │   ├── src/main/java
 │   └── src/main/resources
 ├── frontend/               # Vite + React 18 dashboard with SCSS & shadcn/ui
-├── infrastructure/         # Deployment notes (Google Cloud Run)
+├── infrastructure/         # Deployment notes (containerised stack)
 ├── docker-compose.yml      # Local dev stack (Postgres + backend + frontend)
 └── app-spec.md             # Original product specification
 ```
@@ -39,6 +39,8 @@ cp .env.example .env
 | `JWT_SECRET` | Signing secret for access tokens |
 | `SEMS_ACCOUNT` / `SEMS_PASSWORD` | Credentials for the SEMS API |
 | `SEMS_STATION_ID` | UUID of the monitored station |
+| `DB_NAME` / `DB_USERNAME` / `DB_PASSWORD` | Credentials for the bundled Postgres container |
+| `DB_PORT` | Host port exposed for Postgres (defaults to `5432`) |
 | `APP_ADMIN_EMAIL` / `APP_ADMIN_PASSWORD` | Optional bootstrap admin account |
 
 > The backend reads these via Spring's relaxed binding (e.g. `APP_ADMIN_EMAIL` → `app.admin.email`).
@@ -52,7 +54,7 @@ docker compose up --build
 Services exposed:
 - Backend API: http://localhost:8080
 - Frontend UI: http://localhost:5173
-- PostgreSQL: localhost:5432 (user/password `pv_app` / `pv_app`)
+- PostgreSQL: localhost:<DB_PORT> (default user/password `pv_app` / `pv_app`)
 
 ### Run Backend Locally
 
@@ -95,8 +97,8 @@ The Vite dev server proxies `/api` calls to `http://localhost:8080`.
 
 ## Deployment
 - Container images built via Dockerfiles in `backend/` and `frontend/`
-- Google Cloud Run reference workflow documented in `infrastructure/cloud-run.md`
-- Use Cloud SQL for PostgreSQL; secrets supplied via Secret Manager.
+- Self-hosted deployment notes (Docker Compose + Postgres container) in `infrastructure/postgres-compose.md`
+- Provide secrets to containers via environment variables or your orchestration platform (e.g. Docker secrets, Kubernetes).
 
 ## Next Steps
 1. Integrate actual charting (e.g. Recharts) for powerflow and KPI trends.

@@ -2,18 +2,19 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: pv_management
-      POSTGRES_USER: pv_app
-      POSTGRES_PASSWORD: pv_app
+      POSTGRES_DB: ${DB_NAME:-pv_management}
+      POSTGRES_USER: ${DB_USERNAME:-pv_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pv_app}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U pv_app']
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER']
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   backend:
     build:
@@ -22,9 +23,9 @@ services:
       SPRING_PROFILES_ACTIVE: local
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: pv_management
-      DB_USERNAME: pv_app
-      DB_PASSWORD: pv_app
+      DB_NAME: ${DB_NAME:-pv_management}
+      DB_USERNAME: ${DB_USERNAME:-pv_app}
+      DB_PASSWORD: ${DB_PASSWORD:-pv_app}
       SEMS_ACCOUNT: ${SEMS_ACCOUNT:-changeme}
       SEMS_PASSWORD: ${SEMS_PASSWORD:-changeme}
       SEMS_STATION_ID: ${SEMS_STATION_ID:-changeme}
@@ -36,12 +37,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
     environment:
-      VITE_API_BASE_URL: http://localhost:8080
+      VITE_API_BASE_URL: http://backend:8080
     ports:
       - "5173:80"
     depends_on:

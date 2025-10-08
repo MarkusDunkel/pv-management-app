@@ -280,7 +280,7 @@ CMD ["nginx", "-g", "daemon off;"]
   - `gcloud run deploy backend --image REGION-docker.pkg.dev/PROJECT/REPO/backend:latest --region REGION --platform managed --allow-unauthenticated --set-env-vars "SPRING_PROFILES_ACTIVE=prod,SEMS_BASE_URL=https://eu.semsportal.com/api/v2,SEMS_ACCOUNT=secret://...,SEMS_PASSWORD=secret://...,SEMS_STATION_ID=64703347-271b-446f-9468-0cc1e8f1df30" --min-instances 0 --max-instances 10 --concurrency 80`
   - `gcloud run deploy frontend --image REGION-docker.pkg.dev/PROJECT/REPO/frontend:latest --region REGION --platform managed --allow-unauthenticated --min-instances 0 --max-instances 5`
 - **DB connectivity:**
-  - Prefer **Cloud SQL for PostgreSQL** + **Cloud SQL Connector/JDBC** (no sidecar needed).
+  - Run a managed PostgreSQL container (e.g. Docker Compose on a VM) and supply credentials to the backend through environment variables.
 - **SPA routing:**
   - If serving React directly from Cloud Run (nginx), ensure **history fallback** to `/index.html`.
   - Alternatively, host static files on **Cloud Storage + Cloud CDN** and keep API on Cloud Run.
