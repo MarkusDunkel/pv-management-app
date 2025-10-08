@@ -2,6 +2,5 @@ package com.pvmanagement.domain;
 
 public enum RoleName {
     ROLE_USER,
-    ROLE_ADMIN,
-    ROLE_BITCH
+    ROLE_ADMIN
 }
