@@ -26,9 +26,9 @@ services:
       DB_NAME: ${DB_NAME:-pv_management}
       DB_USERNAME: ${DB_USERNAME:-pv_app}
       DB_PASSWORD: ${DB_PASSWORD:-pv_app}
-      SEMS_ACCOUNT: ${SEMS_ACCOUNT:-changeme}
-      SEMS_PASSWORD: ${SEMS_PASSWORD:-changeme}
-      SEMS_STATION_ID: ${SEMS_STATION_ID:-changeme}
+      SEMS_ACCOUNT: ${SEMS_ACCOUNT}
+      SEMS_PASSWORD: ${SEMS_PASSWORD}
+      SEMS_STATION_ID: ${SEMS_STATION_ID}
       JWT_SECRET: ${JWT_SECRET:-dev-secret}
       APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:-admin@example.com}
       APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-super-secret-password}
