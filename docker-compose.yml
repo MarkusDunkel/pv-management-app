@@ -8,6 +8,13 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-pv_app}
     volumes:
       - /mnt/db/postgres:/var/lib/postgresql/data
+    healthcheck:
+      # Use $$ to escape $ in compose files
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
     networks:
       - appnet
 
