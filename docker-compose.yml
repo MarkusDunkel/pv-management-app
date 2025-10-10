@@ -26,11 +26,17 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-pv_management}
-      DB_USERNAME: ${DB_USERNAME:-pv_app}
-      DB_PASSWORD: ${DB_PASSWORD:-pv_app}
+      JAVA_TOOL_OPTIONS: "-Dspring.profiles.active=prod"
+
+      # Bind & port
+      SERVER_ADDRESS: "0.0.0.0"
+      SERVER_PORT: "8080"
+
+      # Direct Spring datasource wiring (no custom mapping needed)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-pv_management}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-pv_app}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-pv_app}
+
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}
       SEMS_PASSWORD: ${SEMS_PASSWORD}
       SEMS_STATION_ID: ${SEMS_STATION_ID}

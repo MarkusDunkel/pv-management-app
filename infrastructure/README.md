@@ -252,4 +252,10 @@ also read logs after startup with:
 ```bash
 docker compose logs backend
 ```
+and make a fresh restart if something doesn't work:
+```bash 
+docker compose pull
+docker compose down
+docker compose up -d --force-recreate
+```
 ---
