@@ -1,101 +1,255 @@
-Perfect 👍 — here’s the clean, complete summary of all commands for Option A: start fresh.
-This will completely reset your VM (delete the broken one and create a new, clean Debian 12 machine).
+# 🚀 Google Cloud VM Setup – Full Reset & Deployment Guide
 
-🧹 Step 1 – Delete the broken VM and old disks
+This guide describes **Option A: Start Fresh**, which completely resets your VM (deletes the broken one) and creates a new, clean Debian 12 instance with attached persistent disk, Docker, and your application deployed.
+
+---
+
+## 🧹 Step 1 – Delete the Broken VM and Old Disks
+
+```bash
 gcloud config set project pv-management-app
 
 # Stop and delete the old instance (boot + data disks)
-gcloud compute instances delete app-vm \
-  --zone=europe-west1-b --quiet
+gcloud compute instances delete app-vm   --zone=europe-west1-b --quiet
 
 # Delete the extra database disk if it still exists
-gcloud compute disks delete db-disk \
-  --zone=europe-west1-b --quiet
+gcloud compute disks delete db-disk   --zone=europe-west1-b --quiet
+```
 
-⚙️ Step 2 – Create a brand-new VM
-gcloud compute instances create app-vm \
-  --zone=europe-west1-b \
-  --machine-type=e2-micro \
-  --image-family=debian-12 \
-  --image-project=debian-cloud \
-  --boot-disk-size=30GB \
-  --tags=http-server,https-server
+---
 
-🪣 Step 3 – Create and attach a new persistent disk
-# create a 30 GB balanced disk for DB data
-gcloud compute disks create db-disk \
-  --size=30GB \
-  --zone=europe-west1-b \
-  --type=pd-balanced
+## ⚙️ Step 2 – Create a Brand‑New VM
 
-# attach it to the VM
-gcloud compute instances attach-disk app-vm \
-  --disk=db-disk \
-  --zone=europe-west1-b
+```bash
+gcloud compute instances create app-vm   --zone=europe-west1-b   --machine-type=e2-small   --image-family=debian-12   --image-project=debian-cloud   --boot-disk-size=30GB   --tags=http-server,https-server
+```
 
-🌐 Step 4 – (If needed) Open HTTP / HTTPS firewall ports
-gcloud compute firewall-rules create allow-http \
-  --allow=tcp:80 --direction=INGRESS --network=default --quiet || true
+---
 
-gcloud compute firewall-rules create allow-https \
-  --allow=tcp:443 --direction=INGRESS --network=default --quiet || true
+## 🪣 Step 3 – Create and Attach a New Persistent Disk
 
-🔐 Step 5 – SSH into the new VM
+```bash
+# Create a 30 GB balanced disk for DB data
+gcloud compute disks create db-disk   --size=30GB   --zone=europe-west1-b   --type=pd-balanced
+
+# Attach it to the VM
+gcloud compute instances attach-disk app-vm   --disk=db-disk   --zone=europe-west1-b
+```
+
+---
+
+## 🌐 Step 4 – (If Needed) Open HTTP / HTTPS Firewall Ports
+
+```bash
+gcloud compute firewall-rules create allow-http   --allow=tcp:80 --direction=INGRESS --network=default --quiet || true
+
+gcloud compute firewall-rules create allow-https   --allow=tcp:443 --direction=INGRESS --network=default --quiet || true
+```
+
+---
+
+## 🔐 Step 5 – SSH into the New VM
+
+```bash
 gcloud compute ssh app-vm --zone=europe-west1-b
+```
 
-🐳 Step 6 – Install Docker + Compose
+---
+
+## ⚙️ Step 6 – Prevent VM Boot Failure When Attached Disk Is Missing
+
+On reboot, a Google Cloud VM can **hang or fail to boot** if an attached persistent disk (e.g. `db-disk`) isn’t immediately available.  
+To ensure the VM always starts, configure the mount so that the system **continues booting even when the disk is missing or delayed**.
+
+---
+
+### 🧩 2. Prepare the Disk Inside the VM
+
+1. **SSH into the VM**
+   ```bash
+   gcloud compute ssh app-vm --zone=europe-west1-b
+   ```
+
+2. **Verify that the attached disk is visible**
+   ```bash
+   lsblk
+   ```
+You should see `/dev/sdb` listed.
+
+3. **Format the disk (only the first time)**
+   ```bash
+   sudo mkfs.ext4 -F /dev/sdb
+   ```
+
+4. **Create a mount point**
+   ```bash
+   sudo mkdir -p /mnt/db
+   ```
+
+---
+
+### 🧱 3. Configure a Stable and Safe Mount Using UUID
+
+1. **Get the disk’s UUID**
+   ```bash
+   sudo blkid /dev/sdb
+   ```
+Example output:
+   ```
+   /dev/sdb: UUID="abcd1234-ef56-7890-gh12-ijklmnopqrst" TYPE="ext4"
+   ```
+
+2. **Edit the `/etc/fstab` file**
+   ```bash
+   sudo nano /etc/fstab
+   ```
+
+3. **Add this line at the end** (replace the UUID with your own):
+   ```bash
+   UUID=abcd1234-ef56-7890-gh12-ijklmnopqrst /mnt/db ext4 defaults,nofail,x-systemd.device-timeout=10s 0 2
+   ```
+
+**Explanation**
+- `UUID=...` → stable disk identifier that does not change between reboots
+- `nofail` → allows the VM to continue booting even if the disk is missing or unready
+- `x-systemd.device-timeout=10s` → limits how long the system waits for the disk before proceeding
+
+---
+
+### 🔍 4. Validate the Configuration
+
+1. **Test the fstab entry (without rebooting)**
+   ```bash
+   sudo mount -a
+   ```
+If no errors appear, the configuration is valid.
+
+2. **Confirm the disk is mounted**
+   ```bash
+   df -h | grep /mnt/db
+   ```
+
+3. **Reboot and verify persistence**
+   ```bash
+   sudo reboot
+   ```
+
+After the VM restarts:
+   ```bash
+   gcloud compute ssh app-vm --zone=europe-west1-b
+   df -h | grep /mnt/db
+   ```
+
+✅ **Result:**  
+The VM will now **boot cleanly even if the attached disk isn’t ready**.  
+The system will continue startup without errors, and the disk will automatically mount as soon as it becomes available.
+
+---
+
+## 🐳 Step 7 – Install Docker + Compose
+
+```bash
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-  https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
-  | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg]   https://download.docker.com/linux/debian   $(. /etc/os-release && echo $VERSION_CODENAME) stable"   | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker $USER
 newgrp docker
 
-
-Verify:
-
+# Verify installation
 docker version
 docker compose version
+```
+# 🐳 Push Docker Image to Google Artifact Registry
 
-📦 Step 7 – Deploy your app
+Perfect 👍 — that means you’re using **Artifact Registry**, which is the new and recommended system.  
+So your image path is (repeat the same for frontend instead of backend):
+
+```
+europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+```
+
+Here’s the **exact sequence of commands** to push your Docker image there cleanly and verify it works 👇
+
+---
+
+## 🧩 Step-by-Step — Push Docker Image to Artifact Registry
+
+### **1. Authenticate Docker with Artifact Registry**
+```bash
+gcloud auth configure-docker europe-west1-docker.pkg.dev
+```
+This updates your Docker config so you can push images securely to Google.
+
+---
+
+### **2. Build your image**
+From the root of your project (where your `Dockerfile` is located):
+
+```bash
+docker build -t europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest .
+```
+
+📝 **Tip:** You can change `latest` to a version tag (like `v1.0.0`) for better version tracking later.
+
+---
+
+### **3. Push the image to Artifact Registry**
+```bash
+docker push europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+```
+
+You should see output like:
+```
+The push refers to repository [europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend]
+latest: Pushed
+...
+```
+
+---
+
+### **4. Verify the upload**
+Check that it exists in your Artifact Registry:
+```bash
+gcloud artifacts docker images list   europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend
+```
+
+This will show something like:
+```
+IMAGE                                                            TAGS     DIGEST
+europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend  latest  sha256:...
+```
+---
+
+## ✅ Result
+
+Your image is now **built, versioned, and stored securely** in **Google Artifact Registry**.  
+Any VM, Cloud Run service, or Kubernetes cluster in the same project can pull and run it easily.
+
+---
+
+## 📦 Step 8 – Deploy Your App
+
+```bash
 cd ~
 git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git app
 cd app
 docker compose up -d
+```
 
+Then visit:  
+👉 `http://<EXTERNAL_IP>`
 
-Then visit:
-👉 http://<EXTERNAL_IP>
+Get the external IP address:
+```bash
+gcloud compute instances describe app-vm   --zone=europe-west1-b   --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
+```
 
-(Find the IP with gcloud compute instances describe app-vm --zone=europe-west1-b --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
-
-
-Note: Fix the disk not found on boot vm problem:
-
-The robust fix (going forward)
-
-Use the disk’s UUID and tell the OS “don’t fail the boot if it’s missing.”
-
-Get the UUID:
-
-sudo blkid /dev/sdb
-# example output: UUID="abcd-1234-ef56..." TYPE="ext4"
-
-
-Put this in /etc/fstab:
-
-UUID=abcd-1234-ef56...  /mnt/db  ext4  defaults,nofail,x-systemd.device-timeout=10s  0  2
-
-
-UUID=... → stable identifier (won’t change if it shows up as sdc next time).
-
-nofail → boot continues even if the disk isn’t present.
-
-x-systemd.device-timeout=10s → don’t hang for minutes waiting.
+also read logs after startup with:  
+```bash
+docker compose logs backend
+```
+---
