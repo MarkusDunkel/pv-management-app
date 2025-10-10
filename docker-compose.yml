@@ -25,7 +25,6 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_NAME}
       SPRING_PROFILES_ACTIVE: prod
       DB_HOST: db
       DB_PORT: 5432
@@ -38,6 +37,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev-secret}
       APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:-admin@example.com}
       APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-super-secret-password}
+    expose:
+      - "8080"
     networks:
       - appnet
 
