@@ -1,5 +1,6 @@
 package com.pvmanagement.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +9,14 @@ import org.springframework.stereotype.Component;
 public class JwtProperties {
 
     private String secret = "change-me";
-    private long accessTokenTtlSeconds = 3600;
+
+    @Value("${app.jwt.access-token-ttl-seconds}")
+    private long accessTokenTtlSeconds = 30;
+
+    @Value("${app.jwt.refresh-token-ttl-seconds}")
+    private long refreshTokenTtlSeconds;
+
+    private boolean refreshTokenCookieSecure = false;
 
     public String getSecret() {
         return secret;
@@ -24,5 +32,21 @@ public class JwtProperties {
 
     public void setAccessTokenTtlSeconds(long accessTokenTtlSeconds) {
         this.accessTokenTtlSeconds = accessTokenTtlSeconds;
+    }
+
+    public long getRefreshTokenTtlSeconds() {
+        return refreshTokenTtlSeconds;
+    }
+
+    public void setRefreshTokenTtlSeconds(long refreshTokenTtlSeconds) {
+        this.refreshTokenTtlSeconds = refreshTokenTtlSeconds;
+    }
+
+    public boolean isRefreshTokenCookieSecure() {
+        return refreshTokenCookieSecure;
+    }
+
+    public void setRefreshTokenCookieSecure(boolean refreshTokenCookieSecure) {
+        this.refreshTokenCookieSecure = refreshTokenCookieSecure;
     }
 }

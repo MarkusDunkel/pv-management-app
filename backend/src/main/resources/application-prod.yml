@@ -7,6 +7,9 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+app:
+  jwt:
+    refresh-token-cookie-secure: ${JWT_REFRESH_COOKIE_SECURE:false}
 logging:
   level:
     root: INFO

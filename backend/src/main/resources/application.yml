@@ -36,7 +36,9 @@ logging:
 app:
   jwt:
     secret: ${JWT_SECRET:dev-secret}
-    access-token-ttl-seconds: ${JWT_TTL_SECONDS:3600}
+    access-token-ttl-seconds: ${JWT_TTL_SECONDS:900}
+    refresh-token-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:2592000}
+    refresh-token-cookie-secure: ${JWT_REFRESH_COOKIE_SECURE:true}
 
 sems:
   base-url: ${SEMS_BASE_URL:https://eu.semsportal.com/api/v2}
