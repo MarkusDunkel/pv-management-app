@@ -1,10 +1,10 @@
 # 🚀 Google Cloud VM Setup – Full Reset & Deployment Guide
 
-This guide describes **Option A: Start Fresh**, which completely resets your VM (deletes the broken one) and creates a new, clean Debian 12 instance with attached persistent disk, Docker, and your application deployed.
+This guide describes **Option A: Start Fresh**, which completely resets your VM (deletes the broken one) and creates a new, clean Debian 12 instance with attached persistent disk, Docker, and your application deployed.
 
 ---
 
-## 🧹 Step 1 – Delete the Broken VM and Old Disks
+## 🧹 Step 1 – Delete the Broken VM and Old Disks
 
 ```bash
 gcloud config set project pv-management-app
@@ -18,7 +18,7 @@ gcloud compute disks delete db-disk   --zone=europe-west1-b --quiet
 
 ---
 
-## ⚙️ Step 2 – Create a Brand‑New VM
+## ⚙️ Step 2 – Create a Brand‑New VM
 
 ```bash
 gcloud compute instances create app-vm   --zone=europe-west1-b   --machine-type=e2-small   --image-family=debian-12   --image-project=debian-cloud   --boot-disk-size=30GB   --tags=http-server,https-server
@@ -26,10 +26,10 @@ gcloud compute instances create app-vm   --zone=europe-west1-b   --machine-type=
 
 ---
 
-## 🪣 Step 3 – Create and Attach a New Persistent Disk
+## 🪣 Step 3 – Create and Attach a New Persistent Disk
 
 ```bash
-# Create a 30 GB balanced disk for DB data
+# Create a 30 GB balanced disk for DB data
 gcloud compute disks create db-disk   --size=30GB   --zone=europe-west1-b   --type=pd-balanced
 
 # Attach it to the VM
@@ -38,7 +38,7 @@ gcloud compute instances attach-disk app-vm   --disk=db-disk   --zone=europe-wes
 
 ---
 
-## 🌐 Step 4 – (If Needed) Open HTTP / HTTPS Firewall Ports
+## 🌐 Step 4 – (If Needed) Open HTTP / HTTPS Firewall Ports
 
 ```bash
 gcloud compute firewall-rules create allow-http   --allow=tcp:80 --direction=INGRESS --network=default --quiet || true
@@ -48,7 +48,7 @@ gcloud compute firewall-rules create allow-https   --allow=tcp:443 --direction=I
 
 ---
 
-## 🔐 Step 5 – SSH into the New VM
+## 🔐 Step 5 – SSH into the New VM
 
 ```bash
 gcloud compute ssh app-vm --zone=europe-west1-b
@@ -56,41 +56,41 @@ gcloud compute ssh app-vm --zone=europe-west1-b
 
 ---
 
-## ⚙️ Step 6 – Prevent VM Boot Failure When Attached Disk Is Missing
+## ⚙️ Step 6 – Prevent VM Boot Failure When Attached Disk Is Missing
 
-On reboot, a Google Cloud VM can **hang or fail to boot** if an attached persistent disk (e.g. `db-disk`) isn’t immediately available.  
+On reboot, a Google Cloud VM can **hang or fail to boot** if an attached persistent disk (e.g. `db-disk`) isn’t immediately available.  
 To ensure the VM always starts, configure the mount so that the system **continues booting even when the disk is missing or delayed**.
 
 ---
 
-### 🧩 2. Prepare the Disk Inside the VM
+### 🧩 2. Prepare the Disk Inside the VM
 
-1. **SSH into the VM**
+1. **SSH into the VM**
    ```bash
    gcloud compute ssh app-vm --zone=europe-west1-b
    ```
 
-2. **Verify that the attached disk is visible**
+2. **Verify that the attached disk is visible**
    ```bash
    lsblk
    ```
 You should see `/dev/sdb` listed.
 
-3. **Format the disk (only the first time)**
+3. **Format the disk (only the first time)**
    ```bash
    sudo mkfs.ext4 -F /dev/sdb
    ```
 
-4. **Create a mount point**
+4. **Create a mount point**
    ```bash
    sudo mkdir -p /mnt/db
    ```
 
 ---
 
-### 🧱 3. Configure a Stable and Safe Mount Using UUID
+### 🧱 3. Configure a Stable and Safe Mount Using UUID
 
-1. **Get the disk’s UUID**
+1. **Get the disk’s UUID**
    ```bash
    sudo blkid /dev/sdb
    ```
@@ -99,37 +99,37 @@ Example output:
    /dev/sdb: UUID="abcd1234-ef56-7890-gh12-ijklmnopqrst" TYPE="ext4"
    ```
 
-2. **Edit the `/etc/fstab` file**
+2. **Edit the `/etc/fstab` file**
    ```bash
    sudo nano /etc/fstab
    ```
 
-3. **Add this line at the end** (replace the UUID with your own):
+3. **Add this line at the end** (replace the UUID with your own):
    ```bash
    UUID=abcd1234-ef56-7890-gh12-ijklmnopqrst /mnt/db ext4 defaults,nofail,x-systemd.device-timeout=10s 0 2
    ```
 
 **Explanation**
-- `UUID=...` → stable disk identifier that does not change between reboots
-- `nofail` → allows the VM to continue booting even if the disk is missing or unready
-- `x-systemd.device-timeout=10s` → limits how long the system waits for the disk before proceeding
+- `UUID=...` → stable disk identifier that does not change between reboots
+- `nofail` → allows the VM to continue booting even if the disk is missing or unready
+- `x-systemd.device-timeout=10s` → limits how long the system waits for the disk before proceeding
 
 ---
 
-### 🔍 4. Validate the Configuration
+### 🔍 4. Validate the Configuration
 
-1. **Test the fstab entry (without rebooting)**
+1. **Test the fstab entry (without rebooting)**
    ```bash
    sudo mount -a
    ```
 If no errors appear, the configuration is valid.
 
-2. **Confirm the disk is mounted**
+2. **Confirm the disk is mounted**
    ```bash
    df -h | grep /mnt/db
    ```
 
-3. **Reboot and verify persistence**
+3. **Reboot and verify persistence**
    ```bash
    sudo reboot
    ```
@@ -140,13 +140,13 @@ After the VM restarts:
    df -h | grep /mnt/db
    ```
 
-✅ **Result:**  
+✅ **Result:**  
 The VM will now **boot cleanly even if the attached disk isn’t ready**.  
 The system will continue startup without errors, and the disk will automatically mount as soon as it becomes available.
 
 ---
 
-## 🐳 Step 7 – Install Docker + Compose
+## 🐳 Step 7 – Install Docker + Compose
 
 ```bash
 sudo apt-get update
@@ -231,7 +231,7 @@ Any VM, Cloud Run service, or Kubernetes cluster in the same project can pull an
 
 ---
 
-## 📦 Step 8 – Deploy Your App
+## 📦 Step 8 – Deploy Your App
 
 ```bash
 cd ~
@@ -241,7 +241,7 @@ docker compose up -d
 ```
 
 Then visit:  
-👉 `http://<EXTERNAL_IP>`
+👉 `http://<EXTERNAL_IP>`
 
 Get the external IP address:
 ```bash
