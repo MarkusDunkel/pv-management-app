@@ -22,6 +22,9 @@ export const authApi = {
     });
     return data;
   },
+  async logout() {
+    await httpClient.post('/auth/logout');
+  },
   async profile(): Promise<AuthUser> {
     const { data } = await httpClient.get('/auth/me');
     return {

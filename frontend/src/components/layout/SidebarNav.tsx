@@ -1,16 +1,26 @@
 import { NavLink } from 'react-router-dom';
 import { BatteryCharging, History, LogOut, Settings, Sun } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { authApi } from '@/api/auth';
 import styles from './SidebarNav.module.scss';
 
 const navItems = [
   { to: '/dashboard', icon: Sun, label: 'Dashboard' },
-  { to: '/history', icon: History, label: 'History' },
   { to: '/settings', icon: Settings, label: 'Settings' }
 ];
 
 export const SidebarNav = () => {
   const clearSession = useAuthStore((state) => state.clearSession);
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch (error) {
+      // Best effort: ignore network errors and still clear client session
+    } finally {
+      clearSession();
+    }
+  };
 
   return (
     <aside className={styles.sidebar}>
@@ -29,7 +39,7 @@ export const SidebarNav = () => {
           </NavLink>
         ))}
       </nav>
-      <button type="button" className={styles.logoutButton} onClick={clearSession}>
+      <button type="button" className={styles.logoutButton} onClick={handleLogout}>
         <LogOut size={16} />
         <span>Log out</span>
       </button>

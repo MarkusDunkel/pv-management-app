@@ -1,5 +1,14 @@
 import { httpClient } from './httpClient';
 
+export type History = {
+  timestamp: string;
+  pvPowerW: number | null;
+  batteryPowerW: number | null;
+  loadPowerW: number | null;
+  gridPowerW: number | null;
+  stateOfCharge: number | null;
+} []
+
 export interface CurrentMeasurementsDto {
   timestamp: string;
   pvPowerW: number | null;
@@ -48,6 +57,7 @@ export interface DashboardSummaryDto {
     status: string | null;
   };
   currentMeasurements: CurrentMeasurementsDto | null;
+  history: History;
   forecast: ForecastDto[];
 }
 

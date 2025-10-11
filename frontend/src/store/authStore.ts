@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface AuthUser {
   email: string;
@@ -25,7 +25,8 @@ export const useAuthStore = create<AuthState>()(
       clearSession: () => set({ token: null, user: null, isAuthenticated: false })
     }),
     {
-      name: 'pv-auth-storage'
+      name: 'pv-auth-storage',
+      storage: createJSONStorage(() => sessionStorage)
     }
   )
 );
