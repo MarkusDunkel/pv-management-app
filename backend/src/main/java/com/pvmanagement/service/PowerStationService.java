@@ -1,18 +1,15 @@
 package com.pvmanagement.service;
 
 import com.pvmanagement.domain.PowerStation;
-import com.pvmanagement.dto.CurrentMeasurementsDto;
-import com.pvmanagement.dto.DashboardSummaryDto;
-import com.pvmanagement.dto.PowerStationDto;
-import com.pvmanagement.dto.WeatherForecastDto;
+import com.pvmanagement.dto.*;
 import com.pvmanagement.repository.PowerStationRepository;
 import com.pvmanagement.repository.PowerflowSnapshotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,106 +17,81 @@ public class PowerStationService {
 
     private final PowerStationRepository powerStationRepository;
     private final PowerflowSnapshotRepository powerflowSnapshotRepository;
-//    private final InverterRepository inverterRepository;
-//    private final KpiDailyRepository kpiDailyRepository;
-//    private final WeatherForecastRepository weatherForecastRepository;
 
-    public PowerStationService(PowerStationRepository powerStationRepository,
-                               PowerflowSnapshotRepository powerflowSnapshotRepository
-//                               InverterRepository inverterRepository,
-//                               KpiDailyRepository kpiDailyRepository,
-//                               WeatherForecastRepository weatherForecastRepository
-                               ) {
+    public PowerStationService(PowerStationRepository powerStationRepository, PowerflowSnapshotRepository powerflowSnapshotRepository) {
         this.powerStationRepository = powerStationRepository;
         this.powerflowSnapshotRepository = powerflowSnapshotRepository;
-//        this.inverterRepository = inverterRepository;
-//        this.kpiDailyRepository = kpiDailyRepository;
-//        this.weatherForecastRepository = weatherForecastRepository;
     }
 
     public PowerStationDto getPowerStation(Long id) {
         var station = powerStationRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
+                                            .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
         return toDto(station);
     }
 
     public List<PowerStationDto> listPowerStations() {
-        return powerStationRepository.findAll().stream().map(this::toDto).toList();
+        return powerStationRepository.findAll()
+                                     .stream()
+                                     .map(this::toDto)
+                                     .toList();
     }
 
     public DashboardSummaryDto buildDashboard(Long powerStationId) {
         var station = powerStationRepository.findById(powerStationId)
-                .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
+                                            .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
         var snapshot = powerflowSnapshotRepository.findFirstByPowerStationOrderByPowerflowTimestampDesc(station);
-//        var kpi = kpiDailyRepository.findByPowerStationOrderByKpiDateDesc(station).stream().findFirst();
-//        var inverters = inverterRepository.findByPowerStation(station);
+        OffsetDateTime to = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime from = OffsetDateTime.of(1970,
+                                                1,
+                                                1,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                ZoneOffset.UTC);
+        var history = powerflowSnapshotRepository.findByPowerStationAndPowerflowTimestampBetweenOrderByPowerflowTimestampAsc(station,
+                                                                                                                             from,
+                                                                                                                             to);
 
-        CurrentMeasurementsDto current = snapshot.map(snap -> new CurrentMeasurementsDto(
-                snap.getPowerflowTimestamp(),
-                snap.getPvW(),
-                snap.getBatteryW(),
-                snap.getLoadW(),
-                snap.getGridW(),
-                snap.getSocPercent()
-//                inverters.stream().map(inv -> new CurrentMeasurementsDto.InverterStatusDto(
-//                        inv.getSerialNumber(),
-//                        inv.getName(),
-//                        inv.getStatus(),
-//                        inv.getPacW(),
-//                        inv.getEtotalKWh(),
-//                        inv.getTemperatureC(),
-//                        inv.getSocPercent()
-//                )
-                //).toList(),
-//                kpi.map(k -> new CurrentMeasurementsDto.KpiSnapshotDto(
-//                        station.getStationname(),
-//                        snap.getTimestamp(),
-//                        toDouble(k.getPowerKWh()),
-//                        toDouble(k.getTotalPowerKWh()),
-//                        toDouble(k.getPacW()),
-//                        toDouble(k.getYieldRate()),
-//                        toDouble(k.getDayIncomeEur())
-//                )).orElse(null)
-        )).orElse(null);
+        CurrentMeasurementsDto current = snapshot.map(snap -> new CurrentMeasurementsDto(snap.getPowerflowTimestamp(),
+                                                                                         snap.getPvW(),
+                                                                                         snap.getBatteryW(),
+                                                                                         snap.getLoadW(),
+                                                                                         snap.getGridW(),
+                                                                                         snap.getSocPercent()))
+                                                 .orElse(null);
 
-//        var forecast = weatherForecastRepository.findByPowerStationAndForecastDateBetweenOrderByForecastDateAsc(
-//                station,
-//                LocalDate.now(),
-//                LocalDate.now().plusDays(6)
-//        ).stream().map(f -> new WeatherForecastDto(
-//                f.getForecastDate(),
-//                f.getCondTxtD(),
-//                f.getCondTxtN(),
-//                f.getPop(),
-//                f.getUvIndex(),
-//                f.getTmpMin(),
-//                f.getTmpMax(),
-//                f.getWindDir(),
-//                f.getWindSpd()
-//        )).collect(Collectors.toList());
+        List<HistoryResponseDto> historyResponse = history.stream()
+                                                          .map(point -> new HistoryResponseDto(point.getPowerflowTimestamp(),
+                                                                                               point.getPvW(),
+                                                                                               point.getBatteryW(),
+                                                                                               point.getLoadW(),
+                                                                                               point.getGridW(),
+                                                                                               point.getSocPercent()))
+                                                          .toList();
 
-        return new DashboardSummaryDto(toDto(station), current
-//                                       forecast
-        );
+        return new DashboardSummaryDto(toDto(station),
+                                       current,
+                                       historyResponse);
     }
 
     private Double toDouble(Number value) {
-        return value == null ? null : value.doubleValue();
+        return value == null ?
+                null :
+                value.doubleValue();
     }
 
     private PowerStationDto toDto(PowerStation station) {
-        return new PowerStationDto(
-                station.getId(),
-                station.getStationname(),
-                station.getAddress(),
-                station.getLatitude(),
-                station.getLongitude(),
-                station.getCapacityKWp(),
-                station.getBatteryCapacityKWh(),
-                station.getStatus(),
-                station.getOrgName(),
-                station.getTurnonTime(),
-                station.getCreateTime()
-        );
+        return new PowerStationDto(station.getId(),
+                                   station.getStationname(),
+                                   station.getAddress(),
+                                   station.getLatitude(),
+                                   station.getLongitude(),
+                                   station.getCapacityKWp(),
+                                   station.getBatteryCapacityKWh(),
+                                   station.getStatus(),
+                                   station.getOrgName(),
+                                   station.getTurnonTime(),
+                                   station.getCreateTime());
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/measurements")
 public class MeasurementController {
@@ -28,8 +30,8 @@ public class MeasurementController {
     }
 
     @PostMapping("/history/{powerStationId}")
-    public HistoryResponseDto history(@PathVariable Long powerStationId,
-                                      @Valid @RequestBody HistoryRequestDto request) {
+    public List<HistoryResponseDto> history(@PathVariable Long powerStationId,
+                                            @Valid @RequestBody HistoryRequestDto request) {
         return measurementService.history(powerStationId, request);
     }
 }

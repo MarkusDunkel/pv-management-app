@@ -1,7 +1,10 @@
 package com.pvmanagement.dto;
 
+import java.util.List;
+
 public record DashboardSummaryDto(
         PowerStationDto powerStation,
-        CurrentMeasurementsDto currentMeasurements
+        CurrentMeasurementsDto currentMeasurements,
+        List<HistoryResponseDto> history
 ) {
 }
