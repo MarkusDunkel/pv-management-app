@@ -101,8 +101,8 @@ public class SemSyncService {
         snapshot.setPowerStation(station);
         snapshot.setPowerflowTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
         snapshot.setPvW(asBigDecimal(powerflowNode.path("pv")));
-        snapshot.setBatteryW(asBigDecimal(powerflowNode.path("bettery")));
-        snapshot.setLoadW(asBigDecimal(powerflowNode.path("load")));
+        snapshot.setBatteryW(asBigDecimal(powerflowNode.path("bettery")).negate());
+        snapshot.setLoadW(asBigDecimal(powerflowNode.path("load")).negate());
         snapshot.setGridW(asBigDecimal(powerflowNode.path("grid")));
         snapshot.setGensetW(asBigDecimal(powerflowNode.path("genset")));
         snapshot.setMicrogridW(asBigDecimal(powerflowNode.path("microgrid")));
