@@ -89,7 +89,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="dashboard-grid">
+    <div className={`dashboard-grid ${styles.dashboardLayout}`}>
       <section className={styles.heroCard}>
         <div className={styles.heroMain}>
           <div>
@@ -129,7 +129,7 @@ const DashboardPage = () => {
         </div>
         <div className={styles.chartWrapper}>
           {powerflowSeries.length ? (
-            <ResponsiveContainer width="100%" height={320}>
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={powerflowSeries} margin={{ top: 16, right: 24, left: 8, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="timeLabel" minTickGap={24} />

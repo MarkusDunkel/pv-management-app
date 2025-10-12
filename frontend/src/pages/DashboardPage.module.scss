@@ -1,6 +1,23 @@
 @use '@/styles/abstracts/variables' as vars;
 @use '@/styles/abstracts/mixins' as mixins;
 
+.dashboardLayout {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  height: 100vh;
+}
+
+@supports (height: 100dvh) {
+  .dashboardLayout {
+    height: 100dvh;
+  }
+}
+
+.dashboardLayout > section {
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
 .heroCard {
   grid-column: 1 / -1;
   padding: 2rem;
@@ -12,11 +29,14 @@
   gap: 1.5rem;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
+  height: 100%;
+  min-height: 0;
 }
 
 .heroMain {
   display: grid;
   gap: 1.5rem;
+  min-height: 0;
 }
 
 .heroBatteryCard {
@@ -24,6 +44,8 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  height: 100%;
+  min-height: 0;
 }
 
 .statGrid {
@@ -57,11 +79,18 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  height: 100%;
+  min-height: 0;
 }
 
 .chartWrapper {
   width: 100%;
   min-height: 320px;
+  flex: 1;
+}
+
+.chartWrapper :global(.recharts-responsive-container) {
+  height: 100% !important;
 }
 
 .socDisplay {
