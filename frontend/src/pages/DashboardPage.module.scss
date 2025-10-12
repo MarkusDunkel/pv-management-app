@@ -45,6 +45,11 @@
   gap: 1.25rem;
 }
 
+.chartWrapper {
+  width: 100%;
+  min-height: 320px;
+}
+
 .socDisplay {
   display: flex;
   flex-direction: column;

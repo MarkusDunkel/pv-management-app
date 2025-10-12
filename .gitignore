@@ -24,6 +24,7 @@ frontend/node_modules/
 frontend/.vite/
 frontend/.eslintcache
 frontend/.vscode/
+frontend/package-lock.json
 
 # Logs
 *.log

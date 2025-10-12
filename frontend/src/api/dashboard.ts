@@ -2,10 +2,10 @@ import { httpClient } from './httpClient';
 
 export type History = {
   timestamp: string;
-  pvPowerW: number | null;
-  batteryPowerW: number | null;
-  loadPowerW: number | null;
-  gridPowerW: number | null;
+  pvW: number | null;
+  batteryW: number | null;
+  loadW: number | null;
+  gridW: number | null;
   stateOfCharge: number | null;
 } []
 

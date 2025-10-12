@@ -3,7 +3,7 @@ import { dashboardApi } from '@/api/dashboard';
 import { useDashboardStore } from '@/store/dashboardStore';
 
 export const useDashboardData = (powerStationId: number) => {
-  const { setLoading, setPowerflow, setForecast } = useDashboardStore();
+  const { setLoading, setPowerflow, setPowerflowHistory, setForecast } = useDashboardStore();
 
   useEffect(() => {
     let active = true;
@@ -25,14 +25,29 @@ export const useDashboardData = (powerStationId: number) => {
           });
         }
 
-        setForecast(
-          summary.forecast.map((item) => ({
-            date: item.forecastDate,
-            summary: item.summaryDay,
-            high: item.temperatureMax ?? null,
-            low: item.temperatureMin ?? null
-          }))
-        );
+        if (Array.isArray(summary.history)) {
+          setPowerflowHistory(
+            summary.history.map((point) => ({
+              timestamp: point.timestamp,
+              pvW: point.pvW ?? null,
+              batteryW: point.batteryW ?? null,
+              loadW: point.loadW ?? null,
+              gridW: point.gridW ?? null,
+              socPercent: point.stateOfCharge ?? null
+            }))
+          );
+        }
+
+        if (Array.isArray(summary.forecast)) {
+          setForecast(
+            summary.forecast.map((item) => ({
+              date: item.forecastDate,
+              summary: item.summaryDay,
+              high: item.temperatureMax ?? null,
+              low: item.temperatureMin ?? null
+            }))
+          );
+        }
       } catch (error) {
         console.error('Failed to load dashboard data', error);
       } finally {
@@ -46,5 +61,5 @@ export const useDashboardData = (powerStationId: number) => {
       active = false;
       window.clearInterval(interval);
     };
-  }, [powerStationId, setForecast, setLoading, setPowerflow]);
+  }, [powerStationId, setForecast, setLoading, setPowerflow, setPowerflowHistory]);
 };
