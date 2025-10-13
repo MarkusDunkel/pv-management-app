@@ -1,11 +1,10 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/pv_management
+    url: jdbc:postgresql://127.0.0.1:5432/pv_management
     username: pv_app
     password: pv_app
   jpa:
     show-sql: true
-
 logging:
   level:
     com.pvmanagement: DEBUG
