@@ -5,6 +5,7 @@ spring:
     password: pv_app
   jpa:
     show-sql: true
+
 logging:
   level:
     com.pvmanagement: DEBUG
