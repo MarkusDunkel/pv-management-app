@@ -66,10 +66,10 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className={`dashboard-grid ${styles.dashboardLayout}`}>
-      <section className={styles.heroCard}>
+    <div className={`dashboard-grid ${styles['dashboard-page__layout']}`}>
+      <section className={styles['dashboard-page__hero-card']}>
         <FlowChart currentPowerflow={currentPowerflow as PowerflowPoint} />
-        <article className={`${styles.heroBatteryCard} card`}>
+        <article className={`${styles['dashboard-page__battery-card']} card`}>
           <div className="card-heading">
             <h3>Battery State of Charge</h3>
             <span className="text-muted">
@@ -79,8 +79,8 @@ const DashboardPage = () => {
                 : '—'}
             </span>
           </div>
-          <div className={styles.socDisplay}>
-            <span className={styles.socValue}>
+          <div className={styles['dashboard-page__battery-meta']}>
+            <span className={styles['dashboard-page__battery-meta-value']}>
               {currentPowerflow?.socPercent ? `${currentPowerflow.socPercent.toFixed(1)}%` : '—'}
             </span>
             <p>
@@ -90,7 +90,7 @@ const DashboardPage = () => {
         </article>
       </section>
 
-      <section className={`${styles.chartCard} card`}>
+      <section className={`${styles['dashboard-page__chart-card']} card`}>
         <div className="card-heading">
           <h3>Power Flow Trend</h3>
           <span className="text-muted">
@@ -99,7 +99,7 @@ const DashboardPage = () => {
               : 'History data will appear once collected'}
           </span>
         </div>
-        <div className={styles.chartWrapper}>
+        <div className={styles['dashboard-page__chart-wrapper']}>
           {powerflowSeries.length ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={powerflowSeries} margin={{ top: 16, right: 24, left: 8, bottom: 8 }}>

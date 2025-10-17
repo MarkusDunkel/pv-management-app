@@ -31,63 +31,128 @@ export const FlowChart = ({ currentPowerflow }: Props) => {
 
   console.log('relativeDurations: ', relativeDurations);
   return (
-    <div className={styles.flowChart}>
-      <div className={styles.flowChart__firstRow}>
+    <div className={styles['flow-chart']}>
+      <div className={styles['flow-chart__row']}>
         <div
           style={{ '--duration-chevronLeft': `${relativeDurations.left}s` } as React.CSSProperties}
-          className={styles.flowChart__upperLeft}
+          className={cn(
+            styles['flow-chart__segment'],
+            styles['flow-chart__segment--upper-left'],
+          )}
         >
-          <UtilityPole className={styles.iconGrid} />
-          <Dot strokeWidth={5} className={styles.chevronLeft} />
-          <Dot strokeWidth={5} className={styles.chevronLeft} />
-          <Dot strokeWidth={5} className={styles.chevronLeft} />
-          <div className={styles.flowChart__centerOverlay} />
-          <div className={styles.flowChart__valueBoxGrid}>{`${speeds.top} W`}</div>
-          <div className={styles.flowChart__valueBoxSolar}>{`${speeds.left} W`}</div>
+          <UtilityPole
+            className={cn(styles['flow-chart__icon'], styles['flow-chart__icon--grid'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--left'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--left'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--left'])}
+          />
+          <div className={styles['flow-chart__center-overlay']} />
+          <div className={cn(styles['flow-chart__value-box'], styles['flow-chart__value-box--grid'])}>
+            {`${speeds.top} W`}
+          </div>
+          <div className={cn(styles['flow-chart__value-box'], styles['flow-chart__value-box--solar'])}>
+            {`${speeds.left} W`}
+          </div>
         </div>
         <div
           style={{ '--duration-chevronTop': `${relativeDurations.top}s` } as React.CSSProperties}
-          className={styles.flowChart__upperRight}
+          className={cn(
+            styles['flow-chart__segment'],
+            styles['flow-chart__segment--upper-right'],
+          )}
         >
-          <Battery className={styles.iconBattery} />
-          <Dot strokeWidth={5} className={styles.chevronTop} />
-          <Dot strokeWidth={5} className={styles.chevronTop} />
-          <Dot strokeWidth={5} className={styles.chevronTop} />
+          <Battery
+            className={cn(styles['flow-chart__icon'], styles['flow-chart__icon--battery'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--top'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--top'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--top'])}
+          />
         </div>
       </div>
-      <div className={styles.flowChart__secondRow}>
+      <div className={styles['flow-chart__row']}>
         <div
           style={
             { '--duration-chevronBottom': `${relativeDurations.bottom}s` } as React.CSSProperties
           }
-          className={styles.flowChart__lowerLeft}
+          className={cn(
+            styles['flow-chart__segment'],
+            styles['flow-chart__segment--lower-left'],
+          )}
         >
-          <div className={cn(styles.iconPv)}>
-            <div className={cn(styles.iconPvContainer)}>
+          <div className={cn(styles['flow-chart__icon'], styles['flow-chart__icon--pv'])}>
+            <div className={styles['flow-chart__icon-wrapper']}>
               <Sun strokeWidth={2} />
-              <Grid3x2 strokeWidth={2} className={cn(styles.iconPvContainer__decorator)} />
+              <Grid3x2
+                strokeWidth={2}
+                className={styles['flow-chart__icon-decorator']}
+              />
             </div>
           </div>
-          <Dot strokeWidth={5} className={styles.chevronBottom} />
-          <Dot strokeWidth={5} className={styles.chevronBottom} />
-          <Dot strokeWidth={5} className={styles.chevronBottom} />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--bottom'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--bottom'])}
+          />
+          <Dot
+            strokeWidth={5}
+            className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--bottom'])}
+          />
         </div>
         <div
           style={
             { '--duration-chevronRight': `${relativeDurations.right}s` } as React.CSSProperties
           }
-          className={styles.flowChart__lowerRight}
+          className={cn(
+            styles['flow-chart__segment'],
+            styles['flow-chart__segment--lower-right'],
+          )}
         >
-          <HousePlug className={styles.iconLoad} />
+          <HousePlug
+            className={cn(styles['flow-chart__icon'], styles['flow-chart__icon--load'])}
+          />
           {relativeDurations.right !== 0 && (
             <>
-              <Dot strokeWidth={5} className={styles.chevronRight} />
-              <Dot strokeWidth={5} className={styles.chevronRight} />
-              <Dot strokeWidth={5} className={styles.chevronRight} />
+              <Dot
+                strokeWidth={5}
+                className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--right'])}
+              />
+              <Dot
+                strokeWidth={5}
+                className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--right'])}
+              />
+              <Dot
+                strokeWidth={5}
+                className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--right'])}
+              />
             </>
           )}
-          <div className={styles.flowChart__valueBoxLoad}>{`${speeds.bottom} W`}</div>
-          <div className={styles.flowChart__valueBoxBattery}>{`${speeds.right} W`}</div>
+          <div className={cn(styles['flow-chart__value-box'], styles['flow-chart__value-box--load'])}>
+            {`${speeds.bottom} W`}
+          </div>
+          <div className={cn(styles['flow-chart__value-box'], styles['flow-chart__value-box--battery'])}>
+            {`${speeds.right} W`}
+          </div>
         </div>
       </div>
     </div>
