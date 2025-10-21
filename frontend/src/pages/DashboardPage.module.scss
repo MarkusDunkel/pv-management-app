@@ -145,18 +145,6 @@
       height: 100% !important;
     }
   }
-
-  @media (max-width: 768px) {
-    &__hero-card {
-      padding: 1.5rem;
-    }
-  }
-
-  @media (min-width: 992px) {
-    &__hero-card {
-      grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
-    }
-  }
 }
 
 .flow-chart {

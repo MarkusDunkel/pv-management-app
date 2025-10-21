@@ -53,11 +53,3 @@
   font-size: 0.75rem;
   color: vars.$color-text-muted;
 }
-
-@media (max-width: 768px) {
-  .topBar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-}
