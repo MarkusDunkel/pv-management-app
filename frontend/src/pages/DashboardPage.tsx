@@ -16,6 +16,7 @@ import { dashboardApi } from '@/api/dashboard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import styles from './DashboardPage.module.scss';
 import { FlowChart } from '@/components/dashboardPage/FlowChart';
+import { Dot } from 'lucide-react';
 
 const DEFAULT_POWER_STATION_ID = 1;
 
@@ -73,7 +74,6 @@ const DashboardPage = () => {
           <div className="card-heading">
             <h3>Battery State of Charge</h3>
             <span className="text-muted">
-              Last update •{' '}
               {currentPowerflow?.timestamp
                 ? new Date(currentPowerflow.timestamp).toLocaleTimeString()
                 : '—'}
@@ -85,6 +85,34 @@ const DashboardPage = () => {
             </span>
             <p>
               State of charge reflects the current energy buffer available from your battery bank.
+            </p>
+          </div>
+        </article>
+        <article className={`${styles['dashboard-page__status-card']} card`}>
+          <div className={`card-heading`}>
+            <span
+              className={`${styles['dashboard-page__status-card__heading-unit']} 
+              ${styles[currentPowerflow?.socPercent ? 'dashboard-page__status-card--success' : 'dashboard-page__status-card--error']}`}
+            >
+              <h3>Systemstatus</h3>
+              <Dot
+                strokeWidth={7}
+                // className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--left'])}
+              />
+            </span>
+            <span className="text-muted">
+              {currentPowerflow?.timestamp
+                ? new Date(currentPowerflow.timestamp).toLocaleTimeString()
+                : '—'}
+            </span>
+          </div>
+          <div className={styles['dashboard-page__battery-meta']}>
+            <p>System ist gesund. Keine Störungen bekannt.</p>
+            <p>
+              {'Letztes Update: '}
+              {currentPowerflow?.timestamp
+                ? new Date(currentPowerflow.timestamp).toLocaleString()
+                : '—'}
             </p>
           </div>
         </article>

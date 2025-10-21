@@ -30,7 +30,9 @@
   color: inherit;
   border-radius: vars.$radius-md;
   text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     background: rgba(255, 255, 255, 0.08);
@@ -70,16 +72,4 @@
   background: rgba(255, 255, 255, 0.18);
   font-size: 0.875rem;
   align-self: flex-start;
-}
-
-@media (max-width: 960px) {
-  .sidebar {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .navList {
-    flex-direction: row;
-  }
 }
