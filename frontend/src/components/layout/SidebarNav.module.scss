@@ -33,11 +33,11 @@
   transition:
     background 0.2s ease,
     transform 0.2s ease;
+}
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateX(4px);
-  }
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
 }
 
 .navItemActive {
@@ -57,10 +57,10 @@
   color: inherit;
   cursor: pointer;
   transition: background 0.2s ease;
+}
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.24);
-  }
+.logoutButton:hover {
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .stationBadge {

@@ -37,168 +37,166 @@
   }
 }
 
-.dashboard-page {
-  &__layout {
-    grid-template-rows: minmax(350px, 1fr) minmax(200px, 1fr);
-    height: 100%;
-    width: fit-content;
+.dashboard-page__layout {
+  grid-template-rows: minmax(350px, 1fr) minmax(200px, 1fr);
+  height: 100%;
+  width: fit-content;
+}
+
+.dashboard-page__hero-card {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: vars.$radius-lg;
+  background: linear-gradient(135deg, rgba(vars.$color-primary-rgb, 0.12), #ffffff);
+  border: 1px solid vars.$color-border;
+  @include mixins.card-shadow;
+}
+
+.dashboard-page__battery-card {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: fit-content;
+  min-height: 0;
+  width: 300px;
+}
+
+.dashboard-page__status-card {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: fit-content;
+  min-height: 0;
+  width: 300px;
+}
+
+.dashboard-page__status-card__heading-unit {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+}
+
+.dashboard-page__status-card--success {
+  svg {
+    color: vars.$color-success;
   }
+}
 
-  &__hero-card {
-    display: flex;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    border-radius: vars.$radius-lg;
-    background: linear-gradient(135deg, rgba(vars.$color-primary-rgb, 0.12), #ffffff);
-    border: 1px solid vars.$color-border;
-    @include mixins.card-shadow;
+.dashboard-page__status-card--error {
+  svg {
+    color: vars.$color-error;
   }
+}
 
-  &__battery-card {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    height: fit-content;
-    min-height: 0;
-    width: 300px;
-  }
+.dashboard-page__battery-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
 
-  &__status-card {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    height: fit-content;
-    min-height: 0;
-    width: 300px;
+.dashboard-page__battery-meta-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
 
-    &__heading-unit {
-      display: flex;
-      justify-content: flex-start;
-      flex-wrap: nowrap;
-    }
+.dashboard-page__stat-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
 
-    &--success {
-      svg {
-        color: vars.$color-success;
-      }
-    }
+.dashboard-page__stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: vars.$radius-lg;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
 
-    &--error {
-      svg {
-        color: vars.$color-error;
-      }
-    }
-  }
+.dashboard-page__stat-label {
+  font-size: 0.875rem;
+  color: vars.$color-text-muted;
+}
 
-  &__battery-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
+.dashboard-page__stat-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
 
-  &__battery-meta-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-  }
+.dashboard-page__chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  height: 100%;
+  min-height: 0;
+}
 
-  &__stat-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
+.dashboard-page__chart-wrapper {
+  width: 100%;
+  flex: 1;
 
-  &__stat-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: vars.$radius-lg;
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-  }
-
-  &__stat-label {
-    font-size: 0.875rem;
-    color: vars.$color-text-muted;
-  }
-
-  &__stat-value {
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  &__chart-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    height: 100%;
-    min-height: 0;
-  }
-
-  &__chart-wrapper {
-    width: 100%;
-    flex: 1;
-
-    :global(.recharts-responsive-container) {
-      height: 100% !important;
-    }
+  :global(.recharts-responsive-container) {
+    height: 100% !important;
   }
 }
 
 .flow-chart {
-  $padding: 40px;
-  $chevron-size: 20px;
-  $border-width: 2.5px;
-  $move-icons-out: 5px;
-  $graph-tilt: 25deg;
+  $flow-chart-padding: 40px;
+  $flow-chart-chevron-size: 20px;
+  $flow-chart-border-width: 2.5px;
+  $flow-chart-move-icons-out: 5px;
+  $flow-chart-tilt: 25deg;
 
   display: flex;
   flex-direction: column;
   height: 100%;
   aspect-ratio: 1 / 1;
-  transform: rotate($graph-tilt);
+  transform: rotate($flow-chart-tilt);
 
-  &__row {
+  .flow-chart__row {
     display: flex;
     width: 100%;
     height: 100%;
   }
 
-  &__segment {
+  .flow-chart__segment {
     display: flex;
     position: relative;
     width: 100%;
     height: 100%;
-    border: $border-width solid white;
-
-    &--upper-left {
-      border-top-color: transparent;
-      border-left-color: transparent;
-    }
-
-    &--upper-right {
-      border-right-color: transparent;
-      border-top-color: transparent;
-    }
-
-    &--lower-left {
-      border-left-color: transparent;
-      border-bottom-color: transparent;
-    }
-
-    &--lower-right {
-      border-right-color: transparent;
-      border-bottom-color: transparent;
-    }
+    border: $flow-chart-border-width solid white;
   }
 
-  &__center-overlay {
+  .flow-chart__segment--upper-left {
+    border-top-color: transparent;
+    border-left-color: transparent;
+  }
+
+  .flow-chart__segment--upper-right {
+    border-right-color: transparent;
+    border-top-color: transparent;
+  }
+
+  .flow-chart__segment--lower-left {
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  .flow-chart__segment--lower-right {
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  .flow-chart__center-overlay {
     position: absolute;
-    bottom: calc(30px * -0.5 - $border-width);
-    right: calc(30px * -0.5 - $border-width);
+    bottom: calc(30px * -0.5 - $flow-chart-border-width);
+    right: calc(30px * -0.5 - $flow-chart-border-width);
     width: 30px;
     height: 30px;
     background: vars.$color-grey;
@@ -206,71 +204,71 @@
     border-radius: 5px;
   }
 
-  &__chevron {
+  .flow-chart__chevron {
     position: absolute;
     z-index: 1;
-    width: $chevron-size;
-    height: $chevron-size;
+    width: $flow-chart-chevron-size;
+    height: $flow-chart-chevron-size;
     color: vars.$color-text;
+  }
 
-    &--left {
-      bottom: calc(-0.5 * $chevron-size - $border-width);
-      left: 0;
-      animation-name: moveAlongBorderLeft;
-      animation-duration: var(--duration-chevronLeft);
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
+  .flow-chart__chevron--left {
+    bottom: calc(-0.5 * $flow-chart-chevron-size - $flow-chart-border-width);
+    left: 0;
+    animation-name: moveAlongBorderLeft;
+    animation-duration: var(--duration-chevronLeft);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
 
-    &--top {
-      top: 0;
-      left: calc($chevron-size * -0.5 - $border-width);
-      transform: rotate(90deg);
-      animation-name: moveAlongBorderTop;
-      animation-duration: var(--duration-chevronTop);
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
+  .flow-chart__chevron--top {
+    top: 0;
+    left: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
+    transform: rotate(90deg);
+    animation-name: moveAlongBorderTop;
+    animation-duration: var(--duration-chevronTop);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
 
-    &--bottom {
-      top: 0;
-      right: calc($chevron-size * -0.5 - $border-width);
-      transform: rotate(90deg);
-      animation-name: moveAlongBorderBottom;
-      animation-duration: var(--duration-chevronBottom);
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
+  .flow-chart__chevron--bottom {
+    top: 0;
+    right: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
+    transform: rotate(90deg);
+    animation-name: moveAlongBorderBottom;
+    animation-duration: var(--duration-chevronBottom);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
 
-    &--right {
-      top: calc($chevron-size * -0.5 - $border-width);
-      right: 0;
-      animation-name: moveAlongBorderRight;
-      animation-duration: var(--duration-chevronRight);
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
+  .flow-chart__chevron--right {
+    top: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
+    right: 0;
+    animation-name: moveAlongBorderRight;
+    animation-duration: var(--duration-chevronRight);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
   }
 
   @for $i from 0 through 5 {
-    &__chevron--left:nth-child(#{$i + 1}) {
+    .flow-chart__chevron--left:nth-child(#{$i + 1}) {
       animation-delay: calc(var(--duration-chevronLeft, 4s) * -1 / 3 * #{$i});
     }
 
-    &__chevron--top:nth-child(#{$i + 1}) {
+    .flow-chart__chevron--top:nth-child(#{$i + 1}) {
       animation-delay: calc(var(--duration-chevronTop, 4s) * -1 / 3 * #{$i});
     }
 
-    &__chevron--bottom:nth-child(#{$i + 1}) {
+    .flow-chart__chevron--bottom:nth-child(#{$i + 1}) {
       animation-delay: calc(var(--duration-chevronBottom, 4s) * -1 / 3 * #{$i});
     }
 
-    &__chevron--right:nth-child(#{$i + 1}) {
+    .flow-chart__chevron--right:nth-child(#{$i + 1}) {
       animation-delay: calc(var(--duration-chevronRight, 4s) * -1 / 3 * #{$i});
     }
   }
 
-  &__value-box {
+  .flow-chart__value-box {
     position: absolute;
     height: 30px;
     width: fit-content;
@@ -278,90 +276,90 @@
     padding: 5px;
     border-radius: 20px;
     background: white;
-    transform: rotate(-$graph-tilt);
-
-    &--grid {
-      top: 17px;
-      right: -7px;
-      border: 1px solid vars.$color-grid;
-      padding-left: 10px;
-      padding-right: 30px;
-    }
-
-    &--solar {
-      bottom: 18px;
-      left: 5px;
-      border: 1px solid vars.$color-solar;
-      padding-left: 30px;
-      padding-right: 10px;
-    }
-
-    &--load {
-      bottom: 17px;
-      left: -10px;
-      border: 1px solid vars.$color-load;
-      padding-left: 30px;
-      padding-right: 10px;
-    }
-
-    &--battery {
-      top: 10px;
-      right: 5px;
-      border: 1px solid vars.$color-battery;
-      padding-left: 10px;
-      padding-right: 30px;
-    }
+    transform: rotate(-$flow-chart-tilt);
   }
 
-  &__icon {
+  .flow-chart__value-box--grid {
+    top: 17px;
+    right: -7px;
+    border: 1px solid vars.$color-grid;
+    padding-left: 10px;
+    padding-right: 30px;
+  }
+
+  .flow-chart__value-box--solar {
+    bottom: 18px;
+    left: 5px;
+    border: 1px solid vars.$color-solar;
+    padding-left: 30px;
+    padding-right: 10px;
+  }
+
+  .flow-chart__value-box--load {
+    bottom: 17px;
+    left: -10px;
+    border: 1px solid vars.$color-load;
+    padding-left: 30px;
+    padding-right: 10px;
+  }
+
+  .flow-chart__value-box--battery {
+    top: 10px;
+    right: 5px;
+    border: 1px solid vars.$color-battery;
+    padding-left: 10px;
+    padding-right: 30px;
+  }
+
+  .flow-chart__icon {
     position: absolute;
-    width: $padding;
-    height: $padding;
+    width: $flow-chart-padding;
+    height: $flow-chart-padding;
     padding: 5px;
     border: 2px solid black;
     border-radius: 50%;
     background: white;
-    transform: rotate(-$graph-tilt);
+    transform: rotate(-$flow-chart-tilt);
     overflow: hidden;
     z-index: 1000;
-
-    &--pv {
-      top: calc($padding * -0.5);
-      left: -$move-icons-out;
-      color: vars.$color-solar;
-      border-color: vars.$color-solar;
-    }
-
-    &--battery {
-      bottom: calc($padding * -0.5);
-      right: -$move-icons-out;
-      color: vars.$color-battery;
-      border-color: vars.$color-battery;
-    }
-
-    &--load {
-      bottom: -$move-icons-out;
-      left: calc($padding * -0.5);
-      color: vars.$color-load;
-      border-color: vars.$color-load;
-    }
-
-    &--grid {
-      top: -$move-icons-out;
-      right: calc($padding * -0.5);
-      color: vars.$color-grid;
-      border-color: vars.$color-grid;
-    }
   }
 
-  &__icon-wrapper {
+  .flow-chart__icon--pv {
+    top: calc($flow-chart-padding * -0.5);
+    left: -$flow-chart-move-icons-out;
+    color: vars.$color-solar;
+    border-color: vars.$color-solar;
+  }
+
+  .flow-chart__icon--battery {
+    bottom: calc($flow-chart-padding * -0.5);
+    right: -$flow-chart-move-icons-out;
+    color: vars.$color-battery;
+    border-color: vars.$color-battery;
+  }
+
+  .flow-chart__icon--load {
+    bottom: -$flow-chart-move-icons-out;
+    left: calc($flow-chart-padding * -0.5);
+    color: vars.$color-load;
+    border-color: vars.$color-load;
+  }
+
+  .flow-chart__icon--grid {
+    top: -$flow-chart-move-icons-out;
+    right: calc($flow-chart-padding * -0.5);
+    color: vars.$color-grid;
+    border-color: vars.$color-grid;
+  }
+
+  .flow-chart__icon-wrapper {
     position: relative;
     left: 0;
     width: 100%;
     height: 100%;
   }
 
-  &__icon-decorator {
+  .flow-chart__icon-decorator {
     position: absolute;
     bottom: -10px;
     right: -10px;
