@@ -41,6 +41,7 @@
   &__layout {
     grid-template-rows: minmax(350px, 1fr) minmax(200px, 1fr);
     height: 100%;
+    width: fit-content;
   }
 
   &__hero-card {

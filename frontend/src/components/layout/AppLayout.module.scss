@@ -1,7 +1,8 @@
 @use '@/styles/abstracts/variables' as vars;
 
 .publicShell {
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,17 +13,19 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   height: 100vh;
+  width: 100vw;
+
   background-color: vars.$color-background;
 }
 
 .mainContent {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  display: block;
+  width: 100%;
 }
 
 .mainArea {
   height: calc(100vh - 100px);
-  padding: 1.5rem;
+  width: calc(100vw - 280px);
   background-color: vars.$color-surface;
+  overflow: auto;
 }
