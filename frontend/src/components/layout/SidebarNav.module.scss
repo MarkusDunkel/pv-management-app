@@ -1,13 +1,10 @@
-@use '@/styles/abstracts/variables' as vars;
-@use '@/styles/abstracts/mixins' as mixins;
-
 .sidebar {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   padding: 2rem 1.25rem;
-  background: linear-gradient(180deg, vars.$color-sidebar-start, vars.$color-sidebar-end);
-  color: vars.$color-on-sidebar;
+  background: linear-gradient(180deg, var(--color-sidebar-start), var(--color-sidebar-end));
+  color: var(--color-on-sidebar);
 }
 
 .brand {
@@ -28,7 +25,7 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   color: inherit;
-  border-radius: vars.$radius-md;
+  border-radius: var(--radius-md);
   text-decoration: none;
   transition:
     background 0.2s ease,
@@ -52,7 +49,7 @@
   align-items: center;
   padding: 0.75rem 1rem;
   border: none;
-  border-radius: vars.$radius-md;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.12);
   color: inherit;
   cursor: pointer;
@@ -68,7 +65,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: vars.$radius-full;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.18);
   font-size: 0.875rem;
   align-self: flex-start;

@@ -1,12 +1,10 @@
-@use '@/styles/abstracts/variables' as vars;
-
 .topBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  background-color: vars.$color-surface;
-  border-bottom: 1px solid vars.$color-border;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -18,7 +16,7 @@
   }
 
   p {
-    color: vars.$color-text-muted;
+    color: var(--color-text-muted);
     font-size: 0.875rem;
   }
 }
@@ -28,8 +26,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
-  border-radius: vars.$radius-lg;
-  background: vars.$color-chip;
+  border-radius: var(--radius-lg);
+  background: var(--color-chip);
 }
 
 .avatar {
@@ -38,8 +36,8 @@
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: vars.$color-primary;
-  color: vars.$color-on-primary;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-weight: 600;
 }
 
@@ -51,5 +49,5 @@
 .email {
   display: block;
   font-size: 0.75rem;
-  color: vars.$color-text-muted;
+  color: var(--color-text-muted);
 }

@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  /* part 1 */
   --background: 210 36% 98%;
   --foreground: 220 15% 15%;
   --card: 0 0% 100%;
@@ -19,9 +20,36 @@
   --accent-foreground: 222 47% 11%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 36% 98%;
-  --border: 214 32% 91% --input: 214 32% 91%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
   --ring: 204 100% 45%;
   --radius: 0.75rem;
+
+  /* part 2  */
+  --color-background: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-sidebar-start: var(--color-text);
+  --color-sidebar-end: #1e293b;
+  --color-on-surface: #f8fafc;
+  --color-on-sidebar: var(--color-on-surface);
+  --color-on-primary: var(--color-on-surface);
+  --color-primary: #0ea5e9;
+  --color-primary-rgb: 14, 165, 233;
+  --color-text-muted: #64748b;
+  --color-border: rgba(15, 23, 42, 0.08);
+  --color-chip: rgba(14, 165, 233, 0.12);
+  --color-grey: rgb(174, 174, 174);
+  --color-solar: #f59e0b;
+  --color-battery: #22c55e;
+  --color-grid: #ef4444;
+  --color-load: var(--color-primary);
+  --color-error: #ff0000;
+  --color-success: #008000;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-full: 999px;
 }
 
 @layer base {

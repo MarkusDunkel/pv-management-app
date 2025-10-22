@@ -1,20 +1,18 @@
-@use '@/styles/abstracts/variables' as vars;
-
 .loader {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   padding: 2rem;
-  color: vars.$color-text-muted;
+  color: var(--color-text-muted);
 }
 
 .spinner {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 4px solid rgba(vars.$color-primary-rgb, 0.2);
-  border-top-color: vars.$color-primary;
+  border: 4px solid rgba(var(--color-primary-rgb), 0.2);
+  border-top-color: var(--color-primary);
   animation: spin 1s linear infinite;
 }
 

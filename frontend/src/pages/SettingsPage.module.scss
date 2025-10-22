@@ -1,5 +1,3 @@
-@use '@/styles/abstracts/variables' as vars;
-
 .settingsShell {
   display: grid;
   gap: 1.5rem;
@@ -18,17 +16,9 @@
 
   input {
     padding: 0.5rem 0.75rem;
-    border-radius: vars.$radius-md;
-    border: 1px solid vars.$color-border;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     font-size: 1rem;
-  }
-
-  select {
-    padding: 0.5rem 0.75rem;
-    border-radius: vars.$radius-md;
-    border: 1px solid vars.$color-border;
-    font-size: 1rem;
-    background-color: #fff;
   }
 }
 
@@ -44,13 +34,13 @@
 
 .infoBox {
   padding: 1rem;
-  border-radius: vars.$radius-md;
-  background: rgba(14, 165, 233, 0.12);
+  border-radius: var(--radius-md);
+  background: rgba(var(--color-primary-rgb), 0.12);
 
   ul {
     margin-top: 0.75rem;
     padding-left: 1.25rem;
-    color: vars.$color-text;
+    color: var(--color-text);
 
     li + li {
       margin-top: 0.5rem;

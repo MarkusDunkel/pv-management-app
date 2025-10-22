@@ -1,11 +1,10 @@
-@use '@/styles/abstracts/variables' as vars;
 @use '@/styles/abstracts/mixins' as mixins;
 
 .card {
   padding: 1.5rem;
-  border-radius: vars.$radius-lg;
-  background-color: vars.$color-surface;
-  border: 1px solid vars.$color-border;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   @include mixins.card-shadow;
 }
 

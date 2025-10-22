@@ -7,5 +7,5 @@
 @use './utilities/helpers';
 
 body {
-  background: variables.$color-background;
+  background: var(--color-background);
 }
