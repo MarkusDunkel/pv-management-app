@@ -1,7 +1,14 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { userApi } from '@/api/user';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/shadcn/select';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Language } from '@/i18n/config';
 import styles from './SettingsPage.module.scss';
@@ -24,7 +31,7 @@ const SettingsPage = () => {
         setSession(token, {
           email: response.email,
           displayName: response.displayName,
-          roles: response.roles ?? []
+          roles: response.roles ?? [],
         });
       }
       setStatus('saved');
@@ -34,8 +41,8 @@ const SettingsPage = () => {
     }
   };
 
-  const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setLanguage(event.target.value as Language);
+  const handleLanguageChange = (value: string) => {
+    setLanguage(value as Language);
   };
 
   return (
@@ -58,8 +65,12 @@ const SettingsPage = () => {
           <Button type="submit" disabled={status === 'saving'}>
             {status === 'saving' ? t('settings.profile.saving') : t('settings.profile.save')}
           </Button>
-          {status === 'saved' && <span className={styles.helper}>{t('settings.profile.success')}</span>}
-          {status === 'error' && <span className={styles.error}>{t('settings.profile.error')}</span>}
+          {status === 'saved' && (
+            <span className={styles.helper}>{t('settings.profile.success')}</span>
+          )}
+          {status === 'error' && (
+            <span className={styles.error}>{t('settings.profile.error')}</span>
+          )}
         </form>
       </section>
 
@@ -70,10 +81,15 @@ const SettingsPage = () => {
         </div>
         <div className={styles.formGrid}>
           <label htmlFor="language-select">{t('settings.language.heading')}</label>
-          <select id="language-select" value={language} onChange={handleLanguageChange}>
-            <option value="en">{t('settings.language.english')}</option>
-            <option value="de">{t('settings.language.german')}</option>
-          </select>
+          <Select value={language} onValueChange={handleLanguageChange}>
+            <SelectTrigger id="language-select">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">{t('settings.language.english')}</SelectItem>
+              <SelectItem value="de">{t('settings.language.german')}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </section>
 
