@@ -6,11 +6,13 @@ const resources = {
     'common.loading': 'Loading...',
     'dashboard.loadingLiveData': 'Fetching live solar data...',
     'dashboard.batteryHeading': 'Battery State of Charge',
-    'dashboard.batteryDescription': 'State of charge reflects the current energy buffer available from your battery bank.',
+    'dashboard.batteryDescription':
+      'State of charge reflects the current energy buffer available from your battery bank.',
     'dashboard.systemStatusHeading': 'System Status',
     'dashboard.systemStatusHealthy': 'System is healthy. No issues detected.',
     'dashboard.systemStatusUpdated': 'Last update: {{timestamp}}',
     'dashboard.powerFlowHeading': 'Power Flow Trend',
+    'dashboard.powerFlowPointHeading': 'Current State',
     'dashboard.powerFlowUpdated': 'Last update • {{time}}',
     'dashboard.powerFlowEmpty': 'History data will appear once collected.',
     'dashboard.powerFlowNoData': 'Historical readings are not available yet.',
@@ -57,22 +59,26 @@ const resources = {
     'settings.language.english': 'English',
     'settings.language.german': 'German',
     'settings.credentials.heading': 'SEMS Credentials',
-    'settings.credentials.description': 'Configure the credentials that the backend uses to fetch live data.',
-    'settings.credentials.info': 'SEMS API credentials are stored securely in the backend via environment variables or Secret Manager. Refer to the deployment guide to update them safely.',
+    'settings.credentials.description':
+      'Configure the credentials that the backend uses to fetch live data.',
+    'settings.credentials.info':
+      'SEMS API credentials are stored securely in the backend via environment variables or Secret Manager. Refer to the deployment guide to update them safely.',
     'settings.credentials.account': 'Account email used for SEMS login',
     'settings.credentials.password': 'Application password',
-    'settings.credentials.stationId': 'Identifier for the power station being monitored'
+    'settings.credentials.stationId': 'Identifier for the power station being monitored',
   },
   de: {
     'app.loadingDashboard': 'Dashboard wird geladen...',
     'common.loading': 'Lädt...',
     'dashboard.loadingLiveData': 'Aktuelle Solardaten werden abgerufen...',
     'dashboard.batteryHeading': 'Batterieladezustand',
-    'dashboard.batteryDescription': 'Der Ladezustand zeigt die aktuelle Energiereserve Ihres Batteriespeichers.',
+    'dashboard.batteryDescription':
+      'Der Ladezustand zeigt die aktuelle Energiereserve Ihres Batteriespeichers.',
     'dashboard.systemStatusHeading': 'Systemstatus',
     'dashboard.systemStatusHealthy': 'System ist gesund. Keine Störungen bekannt.',
     'dashboard.systemStatusUpdated': 'Letztes Update: {{timestamp}}',
     'dashboard.powerFlowHeading': 'Leistungsverlauf',
+    'dashboard.powerFlowPointHeading': 'Aktueller Zustand',
     'dashboard.powerFlowUpdated': 'Letztes Update • {{time}}',
     'dashboard.powerFlowEmpty': 'Historische Daten werden angezeigt, sobald sie verfügbar sind.',
     'dashboard.powerFlowNoData': 'Es liegen noch keine historischen Messwerte vor.',
@@ -115,16 +121,19 @@ const resources = {
     'settings.profile.success': 'Profil erfolgreich aktualisiert.',
     'settings.profile.error': 'Profil kann derzeit nicht aktualisiert werden.',
     'settings.language.heading': 'Sprache',
-    'settings.language.description': 'Wählen Sie die Sprache der Benutzeroberfläche. Änderungen gelten sofort.',
+    'settings.language.description':
+      'Wählen Sie die Sprache der Benutzeroberfläche. Änderungen gelten sofort.',
     'settings.language.english': 'Englisch',
     'settings.language.german': 'Deutsch',
     'settings.credentials.heading': 'SEMS-Zugangsdaten',
-    'settings.credentials.description': 'Konfigurieren Sie die Zugangsdaten, die das Backend zum Abrufen von Live-Daten verwendet.',
-    'settings.credentials.info': 'SEMS-API-Zugangsdaten werden sicher im Backend über Umgebungsvariablen oder den Secret Manager gespeichert. Konsultieren Sie die Bereitstellungsanleitung, um sie sicher zu aktualisieren.',
+    'settings.credentials.description':
+      'Konfigurieren Sie die Zugangsdaten, die das Backend zum Abrufen von Live-Daten verwendet.',
+    'settings.credentials.info':
+      'SEMS-API-Zugangsdaten werden sicher im Backend über Umgebungsvariablen oder den Secret Manager gespeichert. Konsultieren Sie die Bereitstellungsanleitung, um sie sicher zu aktualisieren.',
     'settings.credentials.account': 'E-Mail-Adresse für den SEMS-Login',
     'settings.credentials.password': 'Anwendungspasswort',
-    'settings.credentials.stationId': 'Kennung der überwachten Anlage'
-  }
+    'settings.credentials.stationId': 'Kennung der überwachten Anlage',
+  },
 } as const satisfies Record<Language, Record<string, string>>;
 
 export type TranslationKey = keyof (typeof resources)['en'];

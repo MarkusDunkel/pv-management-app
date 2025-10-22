@@ -53,11 +53,10 @@
 .dashboard-page__hero-card {
   display: flex;
   gap: 1.5rem;
+  height: 30vh;
+  min-height: 400px;
   padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, hsl(var(--primary-soft)), hsl(var(--card)));
-  border: 1px solid hsl(var(--border));
-  @include mixins.card-shadow;
+  padding-top: 0.4rem;
 }
 
 .dashboard-page__battery-card {
@@ -142,13 +141,16 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  height: 100%;
-  min-height: 0;
+  height: 30vh;
+  min-height: 300px;
 }
 
 .dashboard-page__chart-wrapper {
-  width: 100%;
+  width: calc(100% - 3rem);
   flex: 1;
+  height: 100%;
+  margin: 1.5rem;
+  margin-top: 0.4rem;
 
   :global(.recharts-responsive-container) {
     height: 100% !important;
@@ -179,7 +181,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    border: $flow-chart-border-width solid white;
+    border: $flow-chart-border-width solid hsl(var(--neutral-200));
   }
 
   .flow-chart__segment--upper-left {
