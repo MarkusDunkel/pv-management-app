@@ -18,6 +18,15 @@
   }
 }
 
+@keyframes moveAlongBorderright-invert {
+  from {
+    left: 90%;
+  }
+  to {
+    left: 0%;
+  }
+}
+
 @keyframes moveAlongBorderTop {
   from {
     top: 0;
@@ -213,7 +222,6 @@
 
   .flow-chart__chevron--left {
     bottom: calc(-0.5 * $flow-chart-chevron-size - $flow-chart-border-width);
-    left: 0;
     animation-name: moveAlongBorderLeft;
     animation-duration: var(--duration-chevronLeft);
     animation-timing-function: linear;
@@ -221,9 +229,7 @@
   }
 
   .flow-chart__chevron--top {
-    top: 0;
     left: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
-    transform: rotate(90deg);
     animation-name: moveAlongBorderTop;
     animation-duration: var(--duration-chevronTop);
     animation-timing-function: linear;
@@ -231,9 +237,7 @@
   }
 
   .flow-chart__chevron--bottom {
-    top: 0;
     right: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
-    transform: rotate(90deg);
     animation-name: moveAlongBorderBottom;
     animation-duration: var(--duration-chevronBottom);
     animation-timing-function: linear;
@@ -242,8 +246,15 @@
 
   .flow-chart__chevron--right {
     top: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
-    right: 0;
     animation-name: moveAlongBorderRight;
+    animation-duration: var(--duration-chevronRight);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .flow-chart__chevron--right-invert {
+    top: calc($flow-chart-chevron-size * -0.5 - $flow-chart-border-width);
+    animation-name: moveAlongBorderright-invert;
     animation-duration: var(--duration-chevronRight);
     animation-timing-function: linear;
     animation-iteration-count: infinite;
@@ -263,6 +274,10 @@
     }
 
     .flow-chart__chevron--right:nth-child(#{$i + 1}) {
+      animation-delay: calc(var(--duration-chevronRight, 4s) * -1 / 3 * #{$i});
+    }
+
+    .flow-chart__chevron--right-invert:nth-child(#{$i + 1}) {
       animation-delay: calc(var(--duration-chevronRight, 4s) * -1 / 3 * #{$i});
     }
   }
