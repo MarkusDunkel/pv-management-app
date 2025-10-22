@@ -3,8 +3,8 @@
   flex-direction: column;
   gap: 2rem;
   padding: 2rem 1.25rem;
-  background: linear-gradient(180deg, var(--color-sidebar-start), var(--color-sidebar-end));
-  color: var(--color-on-sidebar);
+  background: linear-gradient(180deg, var(--color-sidebar-surface), var(--color-sidebar-surface-alt));
+  color: var(--color-sidebar-contrast);
 }
 
 .brand {

@@ -23,24 +23,24 @@
 }
 
 .helper {
-  color: #16a34a;
+  color: var(--color-success);
   font-size: 0.875rem;
 }
 
 .error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
 }
 
 .infoBox {
   padding: 1rem;
   border-radius: var(--radius-md);
-  background: rgba(var(--color-primary-rgb), 0.12);
+  background: var(--color-primary-soft);
 
   ul {
     margin-top: 0.75rem;
     padding-left: 1.25rem;
-    color: var(--color-text);
+    color: var(--color-text-primary);
 
     li + li {
       margin-top: 0.5rem;

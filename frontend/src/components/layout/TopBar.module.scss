@@ -16,7 +16,7 @@
   }
 
   p {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
   }
 }
@@ -27,7 +27,7 @@
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
   border-radius: var(--radius-lg);
-  background: var(--color-chip);
+  background: var(--color-chip-surface);
 }
 
 .avatar {
@@ -37,7 +37,7 @@
   height: 2rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: var(--color-on-primary);
+  color: var(--color-primary-contrast);
   font-weight: 600;
 }
 
@@ -49,5 +49,5 @@
 .email {
   display: block;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
