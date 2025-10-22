@@ -47,8 +47,8 @@
   gap: 1.5rem;
   padding: 1.5rem;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--color-primary-soft), var(--color-surface));
-  border: 1px solid var(--color-border);
+  background: linear-gradient(135deg, hsl(var(--primary-soft)), hsl(var(--card)));
+  border: 1px solid hsl(var(--border));
   @include mixins.card-shadow;
 }
 
@@ -80,13 +80,13 @@
 
 .dashboard-page__status-card--success {
   svg {
-    color: var(--color-success);
+    color: hsl(var(--success));
   }
 }
 
 .dashboard-page__status-card--error {
   svg {
-    color: var(--color-error);
+    color: hsl(var(--error));
   }
 }
 
@@ -120,7 +120,7 @@
 
 .dashboard-page__stat-label {
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: hsl(var(--muted-foreground));
 }
 
 .dashboard-page__stat-value {
@@ -198,7 +198,7 @@
     right: calc(30px * -0.5 - $flow-chart-border-width);
     width: 30px;
     height: 30px;
-    background: var(--color-neutral-400);
+    background: hsl(var(--neutral-400));
     z-index: 1000;
     border-radius: 5px;
   }
@@ -208,7 +208,7 @@
     z-index: 1;
     width: $flow-chart-chevron-size;
     height: $flow-chart-chevron-size;
-    color: var(--color-text-primary);
+    color: hsl(var(--foreground));
   }
 
   .flow-chart__chevron--left {
@@ -281,7 +281,7 @@
   .flow-chart__value-box--grid {
     top: 17px;
     right: -7px;
-    border: 1px solid var(--color-graph-grid);
+    border: 1px solid hsl(var(--graph-grid));
     padding-left: 10px;
     padding-right: 30px;
   }
@@ -289,7 +289,7 @@
   .flow-chart__value-box--solar {
     bottom: 18px;
     left: 5px;
-    border: 1px solid var(--color-graph-solar);
+    border: 1px solid hsl(var(--graph-solar));
     padding-left: 30px;
     padding-right: 10px;
   }
@@ -297,7 +297,7 @@
   .flow-chart__value-box--load {
     bottom: 17px;
     left: -10px;
-    border: 1px solid var(--color-graph-load);
+    border: 1px solid hsl(var(--graph-load));
     padding-left: 30px;
     padding-right: 10px;
   }
@@ -305,7 +305,7 @@
   .flow-chart__value-box--battery {
     top: 10px;
     right: 5px;
-    border: 1px solid var(--color-graph-battery);
+    border: 1px solid hsl(var(--graph-battery));
     padding-left: 10px;
     padding-right: 30px;
   }
@@ -326,29 +326,29 @@
   .flow-chart__icon--pv {
     top: calc($flow-chart-padding * -0.5);
     left: -$flow-chart-move-icons-out;
-    color: var(--color-graph-solar);
-    border-color: var(--color-graph-solar);
+    color: hsl(var(--graph-solar));
+    border-color: hsl(var(--graph-solar));
   }
 
   .flow-chart__icon--battery {
     bottom: calc($flow-chart-padding * -0.5);
     right: -$flow-chart-move-icons-out;
-    color: var(--color-graph-battery);
-    border-color: var(--color-graph-battery);
+    color: hsl(var(--graph-battery));
+    border-color: hsl(var(--graph-battery));
   }
 
   .flow-chart__icon--load {
     bottom: -$flow-chart-move-icons-out;
     left: calc($flow-chart-padding * -0.5);
-    color: var(--color-graph-load);
-    border-color: var(--color-graph-load);
+    color: hsl(var(--graph-load));
+    border-color: hsl(var(--graph-load));
   }
 
   .flow-chart__icon--grid {
     top: -$flow-chart-move-icons-out;
     right: calc($flow-chart-padding * -0.5);
-    color: var(--color-graph-grid);
-    border-color: var(--color-graph-grid);
+    color: hsl(var(--graph-grid));
+    border-color: hsl(var(--graph-grid));
   }
 
   .flow-chart__icon-wrapper {

@@ -3,55 +3,55 @@
 @tailwind utilities;
 
 :root {
-  --color-background: hsl(220 43% 97%);
-  --color-background-contrast: hsl(222 47% 11%);
+  --background: 220 43% 97%;
+  --foreground: 222 47% 11%;
 
-  --color-surface: hsl(0 0% 100%);
-  --color-surface-contrast: hsl(222 47% 11%);
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
 
-  --color-text-primary: hsl(222 47% 11%);
-  --color-text-secondary: hsl(215 16% 47%);
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
 
-  --color-border: hsl(222 47% 11% / 0.08);
-  --color-input: hsl(222 47% 11% / 0.12);
-  --color-ring: hsl(199 89% 48%);
+  --muted: 214 32% 91%;
+  --muted-foreground: 215 19% 35%;
 
-  --color-muted: hsl(214 32% 91%);
-  --color-muted-contrast: hsl(215 19% 35%);
+  --primary: 199 89% 48%;
+  --primary-foreground: 210 40% 98%;
+  --primary-soft: 199 89% 48% / 0.12;
+  --primary-soft-strong: 199 89% 48% / 0.2;
 
-  --color-primary: hsl(199 89% 48%);
-  --color-primary-contrast: hsl(210 40% 98%);
-  --color-primary-soft: hsl(199 89% 48% / 0.12);
-  --color-primary-soft-strong: hsl(199 89% 48% / 0.2);
+  --secondary: 142 71% 45%;
+  --secondary-foreground: 138 76% 97%;
 
-  --color-secondary: hsl(142 71% 45%);
-  --color-secondary-contrast: hsl(138 76% 97%);
+  --accent: 38 92% 50%;
+  --accent-foreground: 221 39% 11%;
 
-  --color-accent: hsl(38 92% 50%);
-  --color-accent-contrast: hsl(221 39% 11%);
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
 
-  --color-destructive: hsl(0 84% 60%);
-  --color-destructive-contrast: hsl(210 40% 98%);
+  --success: 142 77% 36%;
+  --success-foreground: 138 76% 97%;
 
-  --color-success: hsl(142 77% 36%);
-  --color-success-contrast: hsl(138 76% 97%);
+  --error: 0 72% 51%;
+  --error-foreground: 0 86% 97%;
 
-  --color-error: hsl(0 72% 51%);
-  --color-error-contrast: hsl(0 86% 97%);
+  --border: 214 32% 89%;
+  --input: 222 47% 11% / 0.12;
+  --ring: 199 89% 48%;
 
-  --color-sidebar-surface: hsl(222 47% 11%);
-  --color-sidebar-surface-alt: hsl(217 33% 17%);
-  --color-sidebar-contrast: hsl(210 40% 98%);
+  --sidebar: 222 47% 11%;
+  --sidebar-alt: 217 33% 17%;
+  --sidebar-foreground: 210 40% 98%;
 
-  --color-chip-surface: hsl(199 89% 48% / 0.12);
-  --color-chip-contrast: hsl(222 47% 11%);
+  --chip: 199 89% 48% / 0.12;
+  --chip-foreground: 222 47% 11%;
 
-  --color-neutral-400: hsl(0 0% 68%);
+  --neutral-400: 0 0% 68%;
 
-  --color-graph-solar: hsl(38 92% 50%);
-  --color-graph-battery: hsl(142 71% 45%);
-  --color-graph-grid: hsl(0 84% 60%);
-  --color-graph-load: hsl(199 89% 48%);
+  --graph-solar: 38 92% 50%;
+  --graph-battery: 142 71% 45%;
+  --graph-grid: 0 84% 60%;
+  --graph-load: 199 89% 48%;
 
   --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
@@ -59,7 +59,6 @@
   --radius-full: 999px;
   --radius: 0.75rem;
 }
-
 @layer base {
   * {
     @apply border-border;

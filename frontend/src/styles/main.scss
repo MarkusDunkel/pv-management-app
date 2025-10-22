@@ -6,5 +6,5 @@
 @use './utilities/helpers';
 
 body {
-  background: var(--color-background);
+  background: hsl(var(--background));
 }

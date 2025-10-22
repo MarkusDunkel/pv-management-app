@@ -3,8 +3,8 @@
 .card {
   padding: 1.5rem;
   border-radius: var(--radius-lg);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   @include mixins.card-shadow;
 }
 

@@ -3,8 +3,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background-color: hsl(var(--card));
+  border-bottom: 1px solid hsl(var(--border));
   position: sticky;
   top: 0;
   z-index: 10;
@@ -16,7 +16,7 @@
   }
 
   p {
-    color: var(--color-text-secondary);
+    color: hsl(var(--muted-foreground));
     font-size: 0.875rem;
   }
 }
@@ -27,7 +27,7 @@
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
   border-radius: var(--radius-lg);
-  background: var(--color-chip-surface);
+  background: hsl(var(--chip));
 }
 
 .avatar {
@@ -36,8 +36,8 @@
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: var(--color-primary);
-  color: var(--color-primary-contrast);
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   font-weight: 600;
 }
 
@@ -49,5 +49,5 @@
 .email {
   display: block;
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: hsl(var(--muted-foreground));
 }

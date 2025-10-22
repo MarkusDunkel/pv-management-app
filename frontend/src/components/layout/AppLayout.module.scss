@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-surface), var(--color-background));
+  background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--background)));
 }
 
 .appShell {
@@ -12,7 +12,7 @@
   grid-template-columns: 280px 1fr;
   height: 100vh;
   width: 100vw;
-  background-color: var(--color-background);
+  background-color: hsl(var(--background));
 }
 
 .mainContent {
@@ -23,6 +23,6 @@
 .mainArea {
   height: calc(100vh - 100px);
   width: calc(100vw - 280px);
-  background-color: var(--color-surface);
+  background-color: hsl(var(--card));
   overflow: auto;
 }
