@@ -47,8 +47,7 @@
 
 .dashboard-page__layout {
   grid-template-rows: minmax(350px, 1fr) minmax(200px, 1fr);
-  height: 100%;
-  width: fit-content;
+  height: fit-content;
 }
 
 .dashboard-page__hero-card {
@@ -69,6 +68,7 @@
   height: fit-content;
   min-height: 0;
   width: 300px;
+  flex-grow: 1;
 }
 
 .dashboard-page__status-card {
@@ -78,7 +78,8 @@
   gap: 1rem;
   height: fit-content;
   min-height: 0;
-  width: 300px;
+  min-width: 300px;
+  flex-grow: 1;
 }
 
 .dashboard-page__status-card__heading-unit {
