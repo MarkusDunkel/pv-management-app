@@ -1,14 +1,16 @@
 import { useAuthStore } from '@/store/authStore';
+import { useTranslation } from '@/hooks/useTranslation';
 import styles from './TopBar.module.scss';
 
 export const TopBar = () => {
   const user = useAuthStore((state) => state.user);
+  const { t } = useTranslation();
 
   return (
     <header className={styles.topBar}>
       <div>
-        <h1>Energy Dashboard</h1>
-        <p>Track production, consumption, and environmental impact in real time.</p>
+        <h1>{t('topbar.title')}</h1>
+        <p>{t('topbar.subtitle')}</p>
       </div>
       {user && (
         <div className={styles.userChip}>

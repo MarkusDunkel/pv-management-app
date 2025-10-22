@@ -1,15 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { BatteryCharging, History, LogOut, Settings, Sun } from 'lucide-react';
+import { BatteryCharging, LogOut, Settings, Sun } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth';
+import { useTranslation } from '@/hooks/useTranslation';
 import styles from './SidebarNav.module.scss';
 
-const navItems = [
-  { to: '/dashboard', icon: Sun, label: 'Dashboard' },
-  { to: '/settings', icon: Settings, label: 'Settings' }
-];
-
 export const SidebarNav = () => {
+  const { t } = useTranslation();
   const clearSession = useAuthStore((state) => state.clearSession);
 
   const handleLogout = async () => {
@@ -22,9 +19,14 @@ export const SidebarNav = () => {
     }
   };
 
+  const navItems = [
+    { to: '/dashboard', icon: Sun, label: t('layout.nav.dashboard') },
+    { to: '/settings', icon: Settings, label: t('layout.nav.settings') }
+  ];
+
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.brand}>PV Management</div>
+      <div className={styles.brand}>{t('layout.brand')}</div>
       <nav className={styles.navList}>
         {navItems.map((item) => (
           <NavLink
@@ -41,11 +43,11 @@ export const SidebarNav = () => {
       </nav>
       <button type="button" className={styles.logoutButton} onClick={handleLogout}>
         <LogOut size={16} />
-        <span>Log out</span>
+        <span>{t('layout.logout')}</span>
       </button>
       <div className={styles.stationBadge}>
         <BatteryCharging size={16} />
-        <span>Live Solar Data</span>
+        <span>{t('layout.stationBadge')}</span>
       </div>
     </aside>
   );

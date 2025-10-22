@@ -1,13 +1,16 @@
-import { FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { userApi } from '@/api/user';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/useTranslation';
+import { Language } from '@/i18n/config';
 import styles from './SettingsPage.module.scss';
 
 const SettingsPage = () => {
   const user = useAuthStore((state) => state.user);
   const setSession = useAuthStore((state) => state.setSession);
   const token = useAuthStore((state) => state.token);
+  const { t, language, setLanguage } = useTranslation();
 
   const [displayName, setDisplayName] = useState(user?.displayName ?? '');
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -31,45 +34,66 @@ const SettingsPage = () => {
     }
   };
 
+  const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(event.target.value as Language);
+  };
+
   return (
     <div className={styles.settingsShell}>
       <section className={`${styles.card} card`}>
         <div className="card-heading">
-          <h2>Profile</h2>
-          <span className="text-muted">Update how your name appears across the dashboard.</span>
+          <h2>{t('settings.profile.heading')}</h2>
+          <span className="text-muted">{t('settings.profile.description')}</span>
         </div>
         <form onSubmit={handleProfileSubmit} className={styles.formGrid}>
-          <label htmlFor="displayName">Display name</label>
+          <label htmlFor="displayName">{t('settings.profile.displayName')}</label>
           <input
             id="displayName"
             type="text"
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
-            placeholder="Jane Doe"
+            placeholder={t('settings.profile.displayNamePlaceholder')}
             required
           />
           <Button type="submit" disabled={status === 'saving'}>
-            {status === 'saving' ? 'Saving…' : 'Save changes'}
+            {status === 'saving' ? t('settings.profile.saving') : t('settings.profile.save')}
           </Button>
-          {status === 'saved' && <span className={styles.helper}>Profile updated successfully.</span>}
-          {status === 'error' && <span className={styles.error}>Unable to update profile right now.</span>}
+          {status === 'saved' && <span className={styles.helper}>{t('settings.profile.success')}</span>}
+          {status === 'error' && <span className={styles.error}>{t('settings.profile.error')}</span>}
         </form>
       </section>
 
       <section className={`${styles.card} card`}>
         <div className="card-heading">
-          <h2>SEMS Credentials</h2>
-          <span className="text-muted">Configure the credentials that the backend uses to fetch live data.</span>
+          <h2>{t('settings.language.heading')}</h2>
+          <span className="text-muted">{t('settings.language.description')}</span>
+        </div>
+        <div className={styles.formGrid}>
+          <label htmlFor="language-select">{t('settings.language.heading')}</label>
+          <select id="language-select" value={language} onChange={handleLanguageChange}>
+            <option value="en">{t('settings.language.english')}</option>
+            <option value="de">{t('settings.language.german')}</option>
+          </select>
+        </div>
+      </section>
+
+      <section className={`${styles.card} card`}>
+        <div className="card-heading">
+          <h2>{t('settings.credentials.heading')}</h2>
+          <span className="text-muted">{t('settings.credentials.description')}</span>
         </div>
         <div className={styles.infoBox}>
-          <p>
-            SEMS API credentials are stored securely in the backend via environment variables or Secret Manager. Refer
-            to the deployment guide to update them safely.
-          </p>
+          <p>{t('settings.credentials.info')}</p>
           <ul>
-            <li><code>SEMS_ACCOUNT</code> – account email used for SEMS login</li>
-            <li><code>SEMS_PASSWORD</code> – application password</li>
-            <li><code>SEMS_STATION_ID</code> – identifier for the power station being monitored</li>
+            <li>
+              <code>SEMS_ACCOUNT</code> – {t('settings.credentials.account')}
+            </li>
+            <li>
+              <code>SEMS_PASSWORD</code> – {t('settings.credentials.password')}
+            </li>
+            <li>
+              <code>SEMS_STATION_ID</code> – {t('settings.credentials.stationId')}
+            </li>
           </ul>
         </div>
       </section>

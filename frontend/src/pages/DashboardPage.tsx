@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { useAuthStore } from '@/store/authStore';
 import { PowerflowPoint, useDashboardStore } from '@/store/dashboardStore';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { dashboardApi } from '@/api/dashboard';
@@ -17,12 +16,13 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import styles from './DashboardPage.module.scss';
 import { FlowChart } from '@/components/dashboardPage/FlowChart';
 import { Dot } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const DEFAULT_POWER_STATION_ID = 1;
 
 const DashboardPage = () => {
-  const { user } = useAuthStore();
   const { currentPowerflow, powerflowHistory, isLoading, setLoading } = useDashboardStore();
+  const { t } = useTranslation();
 
   useDashboardData(DEFAULT_POWER_STATION_ID);
 
@@ -63,8 +63,12 @@ const DashboardPage = () => {
     : null;
 
   if (isLoading && !currentPowerflow) {
-    return <LoadingScreen message="Fetching live solar data..." />;
+    return <LoadingScreen message={t('dashboard.loadingLiveData')} />;
   }
+
+  const systemStatusTimestamp = currentPowerflow?.timestamp
+    ? new Date(currentPowerflow.timestamp).toLocaleString()
+    : '—';
 
   return (
     <div className={`dashboard-grid ${styles['dashboard-page__layout']}`}>
@@ -72,7 +76,7 @@ const DashboardPage = () => {
         <FlowChart currentPowerflow={currentPowerflow as PowerflowPoint} />
         <article className={`${styles['dashboard-page__battery-card']} card`}>
           <div className="card-heading">
-            <h3>Battery State of Charge</h3>
+            <h3>{t('dashboard.batteryHeading')}</h3>
             <span className="text-muted">
               {currentPowerflow?.timestamp
                 ? new Date(currentPowerflow.timestamp).toLocaleTimeString()
@@ -83,9 +87,7 @@ const DashboardPage = () => {
             <span className={styles['dashboard-page__battery-meta-value']}>
               {currentPowerflow?.socPercent ? `${currentPowerflow.socPercent.toFixed(1)}%` : '—'}
             </span>
-            <p>
-              State of charge reflects the current energy buffer available from your battery bank.
-            </p>
+            <p>{t('dashboard.batteryDescription')}</p>
           </div>
         </article>
         <article className={`${styles['dashboard-page__status-card']} card`}>
@@ -94,7 +96,7 @@ const DashboardPage = () => {
               className={`${styles['dashboard-page__status-card__heading-unit']} 
               ${styles[currentPowerflow?.socPercent ? 'dashboard-page__status-card--success' : 'dashboard-page__status-card--error']}`}
             >
-              <h3>Systemstatus</h3>
+              <h3>{t('dashboard.systemStatusHeading')}</h3>
               <Dot
                 strokeWidth={7}
                 // className={cn(styles['flow-chart__chevron'], styles['flow-chart__chevron--left'])}
@@ -107,24 +109,19 @@ const DashboardPage = () => {
             </span>
           </div>
           <div className={styles['dashboard-page__battery-meta']}>
-            <p>System ist gesund. Keine Störungen bekannt.</p>
-            <p>
-              {'Letztes Update: '}
-              {currentPowerflow?.timestamp
-                ? new Date(currentPowerflow.timestamp).toLocaleString()
-                : '—'}
-            </p>
+            <p>{t('dashboard.systemStatusHealthy')}</p>
+            <p>{t('dashboard.systemStatusUpdated', { timestamp: systemStatusTimestamp })}</p>
           </div>
         </article>
       </section>
 
       <section className={`${styles['dashboard-page__chart-card']} card`}>
         <div className="card-heading">
-          <h3>Power Flow Trend</h3>
+          <h3>{t('dashboard.powerFlowHeading')}</h3>
           <span className="text-muted">
             {latestHistoryTime
-              ? `Last update • ${latestHistoryTime.toLocaleTimeString()}`
-              : 'History data will appear once collected'}
+              ? t('dashboard.powerFlowUpdated', { time: latestHistoryTime.toLocaleTimeString() })
+              : t('dashboard.powerFlowEmpty')}
           </span>
         </div>
         <div className={styles['dashboard-page__chart-wrapper']}>
@@ -148,7 +145,7 @@ const DashboardPage = () => {
                   hide={powerflowSeries.every((point) => point.socPercent == null)}
                 />
                 <Tooltip
-                  labelFormatter={(label: string) => `Time • ${label}`}
+                  labelFormatter={(label: string) => t('dashboard.tooltipTime', { label })}
                   contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
                 />
                 <Legend />
@@ -156,7 +153,7 @@ const DashboardPage = () => {
                   yAxisId="power"
                   type="monotone"
                   dataKey="pvW"
-                  name="PV"
+                  name={t('dashboard.series.pv')}
                   stroke="#f97316"
                   strokeWidth={2}
                   dot={false}
@@ -166,7 +163,7 @@ const DashboardPage = () => {
                   yAxisId="power"
                   type="monotone"
                   dataKey="loadW"
-                  name="Load"
+                  name={t('dashboard.series.load')}
                   stroke="#0284c7"
                   strokeWidth={2}
                   dot={false}
@@ -176,7 +173,7 @@ const DashboardPage = () => {
                   yAxisId="power"
                   type="monotone"
                   dataKey="gridW"
-                  name="Grid"
+                  name={t('dashboard.series.grid')}
                   stroke="#ef4444"
                   strokeWidth={2}
                   dot={false}
@@ -186,7 +183,7 @@ const DashboardPage = () => {
                   yAxisId="power"
                   type="monotone"
                   dataKey="batteryW"
-                  name="Battery"
+                  name={t('dashboard.series.battery')}
                   stroke="#22c55e"
                   strokeWidth={2}
                   dot={false}
@@ -196,7 +193,7 @@ const DashboardPage = () => {
                   yAxisId="soc"
                   type="monotone"
                   dataKey="socPercent"
-                  name="State of Charge"
+                  name={t('dashboard.series.stateOfCharge')}
                   stroke="#8b5cf6"
                   strokeWidth={2}
                   dot={false}
@@ -206,7 +203,7 @@ const DashboardPage = () => {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-muted">Historical readings are not available yet.</p>
+            <p className="text-muted">{t('dashboard.powerFlowNoData')}</p>
           )}
         </div>
       </section>

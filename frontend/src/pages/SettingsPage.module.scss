@@ -22,6 +22,14 @@
     border: 1px solid vars.$color-border;
     font-size: 1rem;
   }
+
+  select {
+    padding: 0.5rem 0.75rem;
+    border-radius: vars.$radius-md;
+    border: 1px solid vars.$color-border;
+    font-size: 1rem;
+    background-color: #fff;
+  }
 }
 
 .helper {
