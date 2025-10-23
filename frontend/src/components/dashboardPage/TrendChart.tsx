@@ -3,6 +3,7 @@ import {
   CartesianGrid,
   ComposedChart,
   Legend,
+  LegendPayload,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -12,13 +13,22 @@ import {
 import styles from '@/pages/DashboardPage.module.scss';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDashboardStore } from '@/store/dashboardStore';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { CustomTooltip } from '../ui/recharts/CustomTooltip';
 
 const TICK_COUNT = 5;
 
 export const TrendChart = () => {
   const { powerflowHistory } = useDashboardStore();
   const { t } = useTranslation();
+
+  const [activeKeys, setActiveKeys] = useState<Record<string, boolean>>({
+    batteryW: true,
+    gridW: true,
+    loadW: true,
+    pvW: true,
+    socPercent: true,
+  });
 
   const powerflowSeries = useMemo(() => {
     if (!powerflowHistory.length) {
@@ -36,6 +46,17 @@ export const TrendChart = () => {
         };
       });
   }, [powerflowHistory]);
+
+  const handleLegendClick = (event: LegendPayload) => {
+    const { dataKey } = event;
+
+    if (!dataKey) return;
+
+    setActiveKeys((prev) => ({
+      ...prev,
+      [dataKey as string]: !prev[dataKey as string],
+    }));
+  };
 
   return (
     <section className={styles['dashboard-page__chart-card']}>
@@ -65,20 +86,25 @@ export const TrendChart = () => {
                 hide={powerflowSeries.every((point) => point.socPercent == null)}
               />
               <Tooltip
+                content={<CustomTooltip activeKeys={activeKeys} />}
                 labelFormatter={(label: string) => t('dashboard.tooltipTime', { label })}
                 contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
               />
-              <Legend />
+
+              <Legend onClick={handleLegendClick} />
               <Area
                 yAxisId="soc"
                 type="monotone"
                 dataKey="socPercent"
                 name={t('dashboard.series.stateOfCharge')}
                 fill="hsl(var(--neutral-400))"
-                fillOpacity={0.5}
+                stroke="hsl(var(--neutral-400))"
                 connectNulls
+                activeDot={activeKeys.socPercent ? undefined : false}
                 strokeWidth={0}
+                fillOpacity={activeKeys.socPercent ? 0.5 : 0}
               />
+
               <Line
                 yAxisId="power"
                 type="monotone"
@@ -87,8 +113,11 @@ export const TrendChart = () => {
                 stroke="hsl(var(--graph-solar))"
                 strokeWidth={2}
                 dot={false}
+                strokeOpacity={activeKeys.pvW ? 1 : 0}
                 connectNulls
+                activeDot={activeKeys.pvW ? undefined : false}
               />
+
               <Line
                 yAxisId="power"
                 type="monotone"
@@ -96,8 +125,10 @@ export const TrendChart = () => {
                 name={t('dashboard.series.load')}
                 stroke="hsl(var(--graph-load))"
                 strokeWidth={2}
+                strokeOpacity={activeKeys.loadW ? 1 : 0}
                 dot={false}
                 connectNulls
+                activeDot={activeKeys.loadW ? undefined : false}
               />
               <Line
                 yAxisId="power"
@@ -108,6 +139,8 @@ export const TrendChart = () => {
                 strokeWidth={2}
                 dot={false}
                 connectNulls
+                strokeOpacity={activeKeys.gridW ? 1 : 0}
+                activeDot={activeKeys.gridW ? undefined : false}
               />
               <Line
                 yAxisId="power"
@@ -118,6 +151,8 @@ export const TrendChart = () => {
                 strokeWidth={2}
                 dot={false}
                 connectNulls
+                strokeOpacity={activeKeys.batteryW ? 1 : 0}
+                activeDot={activeKeys.batteryW ? undefined : false}
               />
             </ComposedChart>
           </ResponsiveContainer>
