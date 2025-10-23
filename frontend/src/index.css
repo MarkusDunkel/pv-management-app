@@ -49,17 +49,29 @@
   --neutral-200: 0 0% 86.3%;
   --neutral-400: 0 0% 68%;
 
-  --graph-solar: 38 92% 50%;
-  --graph-battery: 142 71% 45%;
-  --graph-grid: 0 84% 60%;
-  --graph-load: 199 89% 48%;
+  --graph-solar: 33.03 93.97% 54.51%;
+  --graph-battery: 161.94 43.46% 46.47%;
+  --graph-grid: 359.02 93.88% 61.57%;
+  --graph-load: 197.7 61% 39.22%;
 
   --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
   --radius-lg: 0.875rem;
   --radius-full: 999px;
   --radius: 0.75rem;
+
+  --imperial-red: #f94144ff;
+  --orange-crayola: #f3722cff;
+  --carrot-orange: #f8961eff;
+  --coral: #f9844aff;
+  --saffron: #f9c74fff;
+  --pistachio: #90be6dff;
+  --zomp: #43aa8bff;
+  --dark-cyan: #4d908eff;
+  --paynes-gray: #577590ff;
+  --cerulean: #277da1ff;
 }
+
 @layer base {
   * {
     @apply border-border;
@@ -75,4 +87,15 @@
       'Segoe UI',
       sans-serif;
   }
+}
+
+.recharts-cartesian-grid-horizontal line:first-of-type {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.recharts-cartesian-grid-vertical line:nth-last-child(2),
+.recharts-cartesian-grid-vertical line:last-of-type {
+  opacity: 0;
+  pointer-events: none;
 }

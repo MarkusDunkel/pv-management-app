@@ -21,7 +21,7 @@ export const useDashboardData = (powerStationId: number) => {
             batteryW: current.batteryPowerW ?? null,
             loadW: current.loadPowerW ?? null,
             gridW: current.gridPowerW ?? null,
-            socPercent: current.stateOfCharge ?? null
+            socPercent: current.stateOfCharge ?? null,
           });
         }
 
@@ -33,8 +33,8 @@ export const useDashboardData = (powerStationId: number) => {
               batteryW: point.batteryW ?? null,
               loadW: point.loadW ?? null,
               gridW: point.gridW ?? null,
-              socPercent: point.stateOfCharge ?? null
-            }))
+              socPercent: point.socPercent ?? null,
+            })),
           );
         }
 
@@ -44,8 +44,8 @@ export const useDashboardData = (powerStationId: number) => {
               date: item.forecastDate,
               summary: item.summaryDay,
               high: item.temperatureMax ?? null,
-              low: item.temperatureMin ?? null
-            }))
+              low: item.temperatureMin ?? null,
+            })),
           );
         }
       } catch (error) {

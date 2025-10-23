@@ -6,8 +6,8 @@ export type History = {
   batteryW: number | null;
   loadW: number | null;
   gridW: number | null;
-  stateOfCharge: number | null;
-} []
+  socPercent: number | null;
+}[];
 
 export interface CurrentMeasurementsDto {
   timestamp: string;
@@ -63,11 +63,15 @@ export interface DashboardSummaryDto {
 
 export const dashboardApi = {
   async getDashboard(powerStationId: number) {
-    const { data } = await httpClient.get<DashboardSummaryDto>(`/powerstations/${powerStationId}/dashboard`);
+    const { data } = await httpClient.get<DashboardSummaryDto>(
+      `/powerstations/${powerStationId}/dashboard`,
+    );
     return data;
   },
   async getCurrent(powerStationId: number) {
-    const { data } = await httpClient.get<CurrentMeasurementsDto>(`/measurements/current/${powerStationId}`);
+    const { data } = await httpClient.get<CurrentMeasurementsDto>(
+      `/measurements/current/${powerStationId}`,
+    );
     return data;
-  }
+  },
 };
