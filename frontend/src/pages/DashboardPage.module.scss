@@ -45,11 +45,6 @@
   }
 }
 
-.dashboard-page__layout {
-  grid-template-rows: minmax(350px, 1fr) minmax(200px, 1fr);
-  height: fit-content;
-}
-
 .dashboard-page__hero-card {
   display: flex;
   gap: 1.5rem;

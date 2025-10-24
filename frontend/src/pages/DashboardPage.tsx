@@ -1,12 +1,11 @@
 import { dashboardApi } from '@/api/dashboard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { DashboardAccordion } from '@/components/dashboardPage/DashboardAccordion';
+import { DashboardAccordion } from '@/components/ui/DashboardAccordion';
 import { CurrentInfo } from '@/components/dashboardPage/CurrentInfo';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useEffect } from 'react';
-import styles from './DashboardPage.module.scss';
 import { TrendChart } from '@/components/dashboardPage/TrendChart';
 
 const DEFAULT_POWER_STATION_ID = 1;
@@ -50,11 +49,7 @@ const DashboardPage = () => {
     },
   ];
 
-  return (
-    <div className={`dashboard-grid ${styles['dashboard-page__layout']}`}>
-      <DashboardAccordion items={accordionItems} type={'multiple'} />
-    </div>
-  );
+  return <DashboardAccordion items={accordionItems} type={'multiple'} />;
 };
 
 export default DashboardPage;
