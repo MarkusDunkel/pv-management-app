@@ -27,15 +27,47 @@ type MultipleProps = CommonProps & {
 type Props = SingleProps | MultipleProps;
 
 export const DashboardAccordion = (props: Props) => {
-  const { items, className, ...rest } = props;
+  const { items, className } = props;
+  const rootClassName = cn('flex w-full flex-col gap-4 p-4', className);
+  const renderItems = () =>
+    items.map(({ value, title, content, triggerClassName }) => (
+      <AccordionItem key={value} value={value}>
+        <AccordionTrigger className={triggerClassName}>{title}</AccordionTrigger>
+        <AccordionContent>{content}</AccordionContent>
+      </AccordionItem>
+    ));
+
+  if (props.type === 'multiple') {
+    const { value, onValueChange } = props;
+    const initialValue = items.map(({ value: v }) => v);
+
+    return (
+      <Accordion
+        type="multiple"
+        className={rootClassName}
+        value={value}
+        onValueChange={onValueChange}
+        defaultValue={initialValue}
+      >
+        {renderItems()}
+      </Accordion>
+    );
+  }
+
+  const { value, onValueChange, collapsible } = props;
+  const firstValue = items[0]?.value;
+  const initialValue = firstValue;
+
   return (
-    <Accordion className={cn('flex w-full flex-col gap-4 p-4', className)} {...rest}>
-      {items.map(({ value, title, content, triggerClassName }) => (
-        <AccordionItem key={value} value={value}>
-          <AccordionTrigger className={triggerClassName}>{title}</AccordionTrigger>
-          <AccordionContent>{content}</AccordionContent>
-        </AccordionItem>
-      ))}
+    <Accordion
+      type="single"
+      className={rootClassName}
+      value={value}
+      onValueChange={onValueChange}
+      defaultValue={initialValue}
+      collapsible={collapsible}
+    >
+      {renderItems()}
     </Accordion>
   );
 };
