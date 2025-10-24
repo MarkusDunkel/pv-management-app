@@ -65,6 +65,10 @@
   flex-grow: 1;
 }
 
+.dashboard-page__flow-chart-card {
+  padding: 0.8rem !important;
+}
+
 .dashboard-page__status-card {
   align-self: stretch;
   display: flex;
@@ -146,10 +150,7 @@
   height: 100%;
   margin: 1.5rem;
   margin-top: 0.4rem;
-
-  :global(.recharts-responsive-container) {
-    height: 100% !important;
-  }
+  padding: 1.1rem;
 }
 
 .flow-chart {

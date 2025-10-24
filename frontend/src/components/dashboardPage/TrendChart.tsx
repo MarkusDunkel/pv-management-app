@@ -15,6 +15,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useMemo, useState } from 'react';
 import { CustomTooltip } from '../ui/recharts/CustomTooltip';
+import { CustomLegend } from '../ui/recharts/CustomLegend';
 
 const TICK_COUNT = 5;
 
@@ -94,7 +95,14 @@ export const TrendChart = () => {
                 contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
               />
 
-              <Legend onClick={handleLegendClick} />
+              <Legend
+                content={
+                  <CustomLegend
+                    activeKeys={activeKeys}
+                    onLegendItemClick={handleLegendClick}
+                  />
+                }
+              />
               <Area
                 yAxisId="soc"
                 type="monotone"

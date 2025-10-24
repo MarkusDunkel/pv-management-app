@@ -22,7 +22,7 @@ export const CurrentInfo = () => {
 
   return (
     <section className={styles['dashboard-page__hero-card']}>
-      <div className={'card'}>
+      <div className={`${styles['dashboard-page__flow-chart-card']} card`}>
         <FlowChart currentPowerflow={currentPowerflow as PowerflowPoint} />
       </div>
       <article className={`${styles['dashboard-page__battery-card']} card`}>
