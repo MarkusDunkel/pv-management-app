@@ -24,7 +24,7 @@ const RegisterPage = () => {
       setSession(response.token, {
         email: response.email,
         displayName: response.displayName,
-        roles: response.roles
+        roles: response.roles,
       });
       navigate('/dashboard');
     } catch (error) {
@@ -48,7 +48,13 @@ const RegisterPage = () => {
         />
 
         <label htmlFor="email">{t('auth.form.email')}</label>
-        <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+        />
 
         <label htmlFor="password">{t('auth.form.password')}</label>
         <input
@@ -65,7 +71,7 @@ const RegisterPage = () => {
         {status === 'error' && <span className={styles.error}>{t('auth.register.error')}</span>}
       </form>
       <p>
-        {t('auth.register.loginPrompt')}{' '}
+        {t('auth.register.loginPrompt')}
         <Link to="/login">{t('auth.register.loginLink')}</Link>
       </p>
     </div>

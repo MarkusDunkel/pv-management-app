@@ -1,3 +1,5 @@
+import styles from './rechartsComponents.module.scss';
+
 interface PayloadItem {
   dataKey: string;
   name: string;
@@ -10,9 +12,10 @@ interface Props {
   payload?: PayloadItem[];
   label?: string | number;
   activeKeys: Record<string, boolean>;
+  units: Record<string, string>;
 }
 
-export const CustomTooltip = ({ active, payload, label, activeKeys }: Props) => {
+export const CustomTooltip = ({ active, payload, label, activeKeys, units }: Props) => {
   if (!active || !payload || payload.length === 0) {
     return null;
   }
@@ -23,36 +26,31 @@ export const CustomTooltip = ({ active, payload, label, activeKeys }: Props) => 
     return null;
   }
 
+  const orderedNames = filteredPayload.map(({ name }) => name).sort();
+
+  const orderedPayload = orderedNames.map((it) => filteredPayload.find(({ name }) => name == it));
+
   return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        border: '1px solid #cbd5f5',
-        borderRadius: 12,
-        padding: '10px 15px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        fontSize: 14,
-        color: '#333',
-        minWidth: 120,
-      }}
-    >
-      <div style={{ marginBottom: 8, fontWeight: 'bold' }}>{label}</div>
-      {filteredPayload.map(({ dataKey, name, value, color }) => (
-        <div key={dataKey} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: color,
-              marginRight: 8,
-              borderRadius: 2,
-            }}
-          />
-          <div>
-            <span>{name}:</span> <span style={{ fontWeight: 'bold' }}>{value}</span>
+    <div className={styles['minimalTooltip']}>
+      <div className={styles['minimalTooltip__label']}>{label}</div>
+      {orderedPayload
+        .filter((v) => !!v)
+        .map(({ dataKey, name, value, color }) => (
+          <div key={dataKey} className={styles['minimalTooltip__labelIconCt']}>
+            <div
+              className={styles['minimalTooltip__Icon']}
+              style={{
+                backgroundColor: color,
+              }}
+            />
+            <div>
+              <span>{name}: </span>
+              <span
+                className={styles['minimalTooltip__value']}
+              >{`${value} ${units[dataKey]}`}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 };

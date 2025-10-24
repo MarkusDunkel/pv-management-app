@@ -58,6 +58,9 @@ export const TrendChart = () => {
     }));
   };
 
+  const units: Record<string, string> = {};
+  Object.keys(activeKeys).forEach((key) => (units[key] = key != 'socPercent' ? 'W' : '%'));
+
   return (
     <section className={styles['dashboard-page__chart-card']}>
       <div className={`${styles['dashboard-page__chart-wrapper']} card`}>
@@ -86,7 +89,7 @@ export const TrendChart = () => {
                 hide={powerflowSeries.every((point) => point.socPercent == null)}
               />
               <Tooltip
-                content={<CustomTooltip activeKeys={activeKeys} />}
+                content={<CustomTooltip activeKeys={activeKeys} units={units} />}
                 labelFormatter={(label: string) => t('dashboard.tooltipTime', { label })}
                 contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
               />

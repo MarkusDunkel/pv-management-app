@@ -100,7 +100,7 @@ const DashboardPage = () => {
             </section>
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value={'section-2'} className="overflow-hidden  border-border">
+        <AccordionItem value={'section-2'}>
           <AccordionTrigger className="px-4">{t('dashboard.powerFlowHeading')}</AccordionTrigger>
           <AccordionContent>
             <TrendChart />
