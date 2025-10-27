@@ -190,7 +190,7 @@ This updates your Docker config so you can push images securely to Google.
 From the root of your project (where your `Dockerfile` is located):
 
 ```bash
-docker build -t europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest .
+docker build --no-cache -t europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest .
 ```
 
 📝 **Tip:** You can change `latest` to a version tag (like `v1.0.0`) for better version tracking later.
@@ -214,7 +214,7 @@ latest: Pushed
 ### **4. Verify the upload**
 Check that it exists in your Artifact Registry:
 ```bash
-gcloud artifacts docker images list   europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend
+gcloud artifacts docker tags list europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend
 ```
 
 This will show something like:
@@ -238,6 +238,11 @@ cd ~
 git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git app
 cd app
 docker compose up -d
+```
+
+or on redeployment: 
+```bash
+docker compose up -d --no-deps --pull always --force-recreate backend collector frontend
 ```
 
 Then visit:  
