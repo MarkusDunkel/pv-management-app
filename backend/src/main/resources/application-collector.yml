@@ -1,0 +1,58 @@
+# application-collector.yml
+spring:
+  # run as a non-web process (no Tomcat)
+  main:
+    web-application-type: none
+    banner-mode: off
+
+  # use the same datasource values as application.yml (env-driven)
+  datasource:
+    url: ${spring.datasource.url}         # inherits from application.yml (DB_* envs)
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+  # turn ON scheduling for the collector
+  task:
+    scheduling:
+      enabled: true
+        # ensure single-threaded scheduler
+      scheduling:
+        pool:
+          size: 1
+        execution:
+          shutdown:
+            await-termination: true
+            await-termination-period: 30s
+
+
+  # the collector shouldn't run Flyway migrations; let the backend own them
+  flyway:
+    enabled: false
+
+# minimal actuator on its own port so compose can healthcheck it
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: "never"   # avoid leaking DB details in health
+
+# keep logging modest in the worker
+logging:
+  level:
+    root: INFO
+    com.pvmanagement: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN
+
+# optional feature flag if you guarded your collector code with @ConditionalOnProperty
+ingestion:
+  enabled: true
+
+# SEMS config still comes from application.yml/env; nothing special needed here
+# sems.* values inherit from application.yml (and your env)
