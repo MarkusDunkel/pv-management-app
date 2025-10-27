@@ -10,10 +10,14 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.util.retry.Retry;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
@@ -75,8 +79,19 @@ public class SemsClient {
                 .body(BodyInserters.fromValue(body))
                 .retrieve()
                 .bodyToMono(JsonNode.class)
-                .timeout(Duration.ofSeconds(10))
-                .blockOptional()
+                                // 1) retries/backoff first
+                                .retryWhen(
+                                        Retry.backoff(3, Duration.ofSeconds(2))
+                                             .maxBackoff(Duration.ofSeconds(8))
+                                             .filter(ex -> ex instanceof TimeoutException
+                                                     || ex instanceof IOException
+                                                     || (ex instanceof WebClientResponseException w
+                                                     && (w.getStatusCode().is5xxServerError()
+                                                     || w.getStatusCode().value() == 429))))
+                                // 2) single overall budget AFTER retries (includes backoff time)
+                                .timeout(Duration.ofSeconds(25))
+                                // 3) optional outer guard slightly larger than operator timeout
+                                .blockOptional(Duration.ofSeconds(30))
                 .orElseThrow(() -> new IllegalStateException("SEMS login returned empty response"));
 
         var data = response.path("data");
