@@ -9,6 +9,7 @@ import com.pvmanagement.dto.UserProfileDto;
 import com.pvmanagement.service.AuthResult;
 import com.pvmanagement.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.Instant;
 
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

@@ -10,6 +10,7 @@ import com.pvmanagement.dto.UserProfileDto;
 import com.pvmanagement.repository.RoleRepository;
 import com.pvmanagement.repository.UserAccountRepository;
 import com.pvmanagement.security.JwtService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @Service
 public class AuthService {
 
