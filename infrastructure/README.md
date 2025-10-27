@@ -169,7 +169,7 @@ Perfect 👍 — that means you’re using **Artifact Registry**, which is the n
 So your image path is (repeat the same for frontend instead of backend):
 
 ```
-europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+docker push europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
 ```
 
 Here’s the **exact sequence of commands** to push your Docker image there cleanly and verify it works 👇
