@@ -13,6 +13,7 @@ export const SidebarNav = () => {
     try {
       await authApi.logout();
     } catch (error) {
+      console.log('logout error: ', error);
       // Best effort: ignore network errors and still clear client session
     } finally {
       clearSession();
@@ -21,7 +22,7 @@ export const SidebarNav = () => {
 
   const navItems = [
     { to: '/dashboard', icon: Sun, label: t('layout.nav.dashboard') },
-    { to: '/settings', icon: Settings, label: t('layout.nav.settings') }
+    { to: '/settings', icon: Settings, label: t('layout.nav.settings') },
   ];
 
   return (
@@ -33,7 +34,9 @@ export const SidebarNav = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              [styles.navItem, isActive ? styles.navItemActive : undefined].filter(Boolean).join(' ')
+              [styles.navItem, isActive ? styles.navItemActive : undefined]
+                .filter(Boolean)
+                .join(' ')
             }
           >
             <item.icon size={18} />
