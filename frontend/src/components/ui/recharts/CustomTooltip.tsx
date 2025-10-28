@@ -1,3 +1,4 @@
+import { toDateTimeString } from '@/components/date-utils';
 import styles from './rechartsComponents.module.scss';
 
 interface PayloadItem {
@@ -10,7 +11,7 @@ interface PayloadItem {
 interface Props {
   active?: boolean | undefined;
   payload?: PayloadItem[];
-  label?: string | number;
+  label?: string;
   activeKeys: Record<string, boolean>;
   units: Record<string, string>;
 }
@@ -32,7 +33,9 @@ export const CustomTooltip = ({ active, payload, label, activeKeys, units }: Pro
 
   return (
     <div className={styles['minimalTooltip']}>
-      <div className={styles['minimalTooltip__label']}>{label}</div>
+      <div className={styles['minimalTooltip__label']}>
+        {toDateTimeString(new Date(label || ''))}
+      </div>
       {orderedPayload
         .filter((v) => !!v)
         .map(({ dataKey, name, value, color }) => (

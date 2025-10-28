@@ -18,10 +18,19 @@ import { endOfDay, isAfter, isBefore, startOfDay } from 'date-fns';
 import { DatePicker } from '@/components/ui/shadcn/date-picker';
 import { CustomTooltip } from '../ui/recharts/CustomTooltip';
 import { CustomLegend } from '../ui/recharts/CustomLegend';
+import { diffInDaysLocal, HOUR_MS, toDateString } from '@/components/date-utils';
+import { daytimeResolvedTickFormatter, getHourTicks, getMidnightTicks } from '../ui/recharts/utils';
 
 const TICK_COUNT = 5;
 
-type PowerflowSeriesPoint = PowerflowPoint & { timeLabel: string };
+type PowerflowSeriesPoint = {
+  timestamp: number;
+  pvW: number | null;
+  batteryW: number | null;
+  loadW: number | null;
+  gridW: number | null;
+  socPercent: number | null;
+};
 
 export const TrendChart = () => {
   const { powerflowHistory } = useDashboardStore();
@@ -36,20 +45,35 @@ export const TrendChart = () => {
   });
 
   const powerflowSeries = useMemo<PowerflowSeriesPoint[]>(() => {
-    if (!powerflowHistory.length) {
-      return [];
+    if (!powerflowHistory.length) return [];
+
+    const sorted = [...powerflowHistory]
+      .filter((p) => p.timestamp)
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+      .map((it) => ({
+        ...it,
+        timestamp: new Date(it.timestamp).getTime(),
+      }));
+
+    const withGaps: PowerflowSeriesPoint[] = [sorted[0]];
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = sorted[i - 1];
+      const cur = sorted[i];
+      const dt = cur.timestamp - prev.timestamp;
+
+      if (dt > HOUR_MS / 4) {
+        // create a null "gap marker"
+        const gapPoint: PowerflowSeriesPoint = { timestamp: prev.timestamp + 1 } as any;
+        for (const key of Object.keys(cur)) {
+          if (key !== 'timestamp') gapPoint[key as keyof PowerflowSeriesPoint] = null as any;
+        }
+        withGaps.push(gapPoint);
+      }
+
+      withGaps.push(cur);
     }
 
-    return [...powerflowHistory]
-      .filter((point) => point.timestamp)
-      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-      .map((point) => {
-        const date = new Date(point.timestamp);
-        return {
-          ...point,
-          timeLabel: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
-      });
+    return withGaps;
   }, [powerflowHistory]);
 
   const chartRange = useMemo(() => {
@@ -151,6 +175,8 @@ export const TrendChart = () => {
 
   const hasSeriesData = filteredSeries.length > 0;
 
+  const timeSeriesLengthDays = (fromDate && toDate && diffInDaysLocal(fromDate, toDate)) || 0;
+
   return (
     <section className={styles['dashboard-page__chart-card']}>
       <div className={`${styles['dashboard-page__chart-wrapper']} card`}>
@@ -182,7 +208,30 @@ export const TrendChart = () => {
                   margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="grey" yAxisId="power" />
-                  <XAxis dataKey="timeLabel" minTickGap={24} />
+                  <XAxis
+                    dataKey="timestamp"
+                    type="number"
+                    scale="time"
+                    domain={['dataMin', 'dataMax']}
+                    ticks={
+                      timeSeriesLengthDays === 0
+                        ? getHourTicks(
+                            filteredSeries.map((it) => it.timestamp),
+                            1,
+                          )
+                        : timeSeriesLengthDays <= 3
+                          ? getHourTicks(
+                              filteredSeries.map((it) => it.timestamp),
+                              6,
+                            )
+                          : getMidnightTicks(filteredSeries.map((it) => it.timestamp))
+                    }
+                    tickFormatter={(label) =>
+                      timeSeriesLengthDays > 3
+                        ? toDateString(new Date(label))
+                        : daytimeResolvedTickFormatter(label)
+                    }
+                  />
                   <YAxis
                     yAxisId="power"
                     tickFormatter={(value) => `${Math.round(value)} W`}
@@ -192,7 +241,10 @@ export const TrendChart = () => {
                   <YAxis
                     yAxisId="soc"
                     orientation="right"
-                    domain={[0, (dataMax) => Math.ceil(dataMax / (TICK_COUNT - 1)) * (TICK_COUNT - 1)]}
+                    domain={[
+                      0,
+                      (dataMax) => Math.ceil(dataMax / (TICK_COUNT - 1)) * (TICK_COUNT - 1),
+                    ]}
                     tickFormatter={(value) => `${Math.round(value)}%`}
                     tickCount={TICK_COUNT}
                     width={60}
@@ -201,16 +253,12 @@ export const TrendChart = () => {
                   />
                   <Tooltip
                     content={<CustomTooltip activeKeys={activeKeys} units={units} />}
-                    labelFormatter={(label: string) => t('dashboard.tooltipTime', { label })}
                     contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
                   />
 
                   <Legend
                     content={
-                      <CustomLegend
-                        activeKeys={activeKeys}
-                        onLegendItemClick={handleLegendClick}
-                      />
+                      <CustomLegend activeKeys={activeKeys} onLegendItemClick={handleLegendClick} />
                     }
                   />
                   <Area
@@ -220,7 +268,7 @@ export const TrendChart = () => {
                     name={t('dashboard.series.stateOfCharge')}
                     fill="hsl(var(--neutral-400))"
                     stroke="hsl(var(--neutral-400))"
-                    connectNulls
+                    connectNulls={false}
                     activeDot={activeKeys.socPercent ? undefined : false}
                     strokeWidth={0}
                     fillOpacity={activeKeys.socPercent ? 0.5 : 0}
@@ -235,7 +283,7 @@ export const TrendChart = () => {
                     strokeWidth={2}
                     dot={false}
                     strokeOpacity={activeKeys.pvW ? 1 : 0}
-                    connectNulls
+                    connectNulls={false}
                     activeDot={activeKeys.pvW ? undefined : false}
                   />
 
@@ -248,7 +296,7 @@ export const TrendChart = () => {
                     strokeWidth={2}
                     strokeOpacity={activeKeys.loadW ? 1 : 0}
                     dot={false}
-                    connectNulls
+                    connectNulls={false}
                     activeDot={activeKeys.loadW ? undefined : false}
                   />
                   <Line
@@ -259,7 +307,7 @@ export const TrendChart = () => {
                     stroke="hsl(var(--graph-grid))"
                     strokeWidth={2}
                     dot={false}
-                    connectNulls
+                    connectNulls={false}
                     strokeOpacity={activeKeys.gridW ? 1 : 0}
                     activeDot={activeKeys.gridW ? undefined : false}
                   />
@@ -271,7 +319,7 @@ export const TrendChart = () => {
                     stroke="hsl(var(--graph-battery))"
                     strokeWidth={2}
                     dot={false}
-                    connectNulls
+                    connectNulls={false}
                     strokeOpacity={activeKeys.batteryW ? 1 : 0}
                     activeDot={activeKeys.batteryW ? undefined : false}
                   />
