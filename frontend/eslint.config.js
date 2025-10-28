@@ -1,4 +1,4 @@
-// eslint.config.js
+// eslint.config.js (flat config)
 import js from '@eslint/js';
 import react from 'eslint-plugin-react';
 import hooks from 'eslint-plugin-react-hooks';
@@ -7,16 +7,15 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   js.configs.recommended,
-
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
-    ignores: ['dist', 'build', 'node_modules'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         ecmaFeatures: { jsx: true },
         sourceType: 'module',
         ecmaVersion: 'latest',
+        projectService: false, // set true + tsconfig root if you want project-aware rules
       },
     },
     plugins: {
@@ -24,8 +23,6 @@ export default [
       'react-hooks': hooks,
       '@typescript-eslint': ts,
     },
-    ...react.configs.recommended,
-    ...ts.configs.recommended,
     rules: {
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',

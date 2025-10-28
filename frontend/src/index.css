@@ -99,3 +99,18 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* Calendar (shadcn date picker) overrides */
+.rdp {
+  --rdp-cell-size: 2.75rem;
+  --rdp-caption-font-size: 0.95rem;
+  margin: 0;
+}
+
+.rdp-button_reset {
+  color: inherit;
+}
+
+.rdp-button_reset:focus {
+  outline: none;
+}
