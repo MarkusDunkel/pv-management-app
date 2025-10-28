@@ -141,7 +141,7 @@
   flex-direction: column;
   gap: 1.25rem;
   height: 30vh;
-  min-height: 300px;
+  min-height: 400px;
 }
 
 .dashboard-page__chart-wrapper {
@@ -151,6 +151,28 @@
   margin: 1.5rem;
   margin-top: 0.4rem;
   padding: 1.1rem;
+}
+
+.dashboard-page__chart-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.dashboard-page__chart-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.dashboard-page__chart-area {
+  flex: 1;
+}
+
+.dashboard-page__chart-empty {
+  color: hsl(var(--muted-foreground));
 }
 
 .flow-chart {

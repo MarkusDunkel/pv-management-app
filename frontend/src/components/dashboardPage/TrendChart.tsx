@@ -180,8 +180,8 @@ export const TrendChart = () => {
   return (
     <section className={styles['dashboard-page__chart-card']}>
       <div className={`${styles['dashboard-page__chart-wrapper']} card`}>
-        <div className="flex h-full flex-col gap-4">
-          <div className="flex flex-wrap items-end gap-3">
+        <div className={styles['dashboard-page__chart-content']}>
+          <div className={styles['dashboard-page__chart-filters']}>
             <DatePicker
               label={t('dashboard.powerFlowRangeFrom')}
               date={fromDate}
@@ -200,7 +200,7 @@ export const TrendChart = () => {
             />
           </div>
 
-          <div className="flex-1">
+          <div className={styles['dashboard-page__chart-area']}>
             {hasSeriesData ? (
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
@@ -326,7 +326,9 @@ export const TrendChart = () => {
                 </ComposedChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-muted">{t('dashboard.powerFlowNoData')}</p>
+              <p className={styles['dashboard-page__chart-empty']}>
+                {t('dashboard.powerFlowNoData')}
+              </p>
             )}
           </div>
         </div>

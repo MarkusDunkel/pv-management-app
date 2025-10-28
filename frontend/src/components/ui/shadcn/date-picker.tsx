@@ -41,7 +41,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }, [minDate, maxDate]);
 
   return (
-    <div className="flex min-w-[12rem] flex-col gap-1">
+    <div className="flex min-w-[12rem] flex-row gap-1 items-center">
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <Popover>
         <PopoverTrigger asChild>
