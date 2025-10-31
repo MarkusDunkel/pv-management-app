@@ -1,4 +1,46 @@
+version: "3.9"
+
 services:
+  # === Reverse proxy / TLS terminator ===
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      # Discover Docker services
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+
+      # Entrypoints
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # Redirect all HTTP -> HTTPS
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+
+      # Let's Encrypt (HTTP-01)
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+
+      # (Optional) use staging CA first to test and avoid rate limits:
+      # - --certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+
+      # (Optional) dashboard — keep disabled or protect heavily
+      - --api.dashboard=false
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080"   # dashboard (disabled above)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    networks:
+      - appnet
+    labels:
+      - "traefik.enable=true"
+
   db:
     image: postgres:15
     restart: unless-stopped
@@ -41,16 +83,38 @@ services:
       - "8080"
     networks:
       - appnet
+    # no labels => not exposed publicly
 
   frontend:
     image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/frontend:latest
     restart: unless-stopped
     depends_on:
       - backend
-    ports:
-      - "80:80"
+    # IMPORTANT: remove host port publishing; Traefik owns :80/:443 on the host
+    # ports:
+    #   - "80:80"
     networks:
       - appnet
+    labels:
+      - "traefik.enable=true"
+
+      # Route HTTPS traffic for your host to this service
+      - "traefik.http.routers.front.rule=Host(`${APP_HOST}`)"
+      - "traefik.http.routers.front.entrypoints=websecure"
+      - "traefik.http.routers.front.tls=true"
+      - "traefik.http.routers.front.tls.certresolver=le"
+
+      # If the container does NOT listen on 80 internally, uncomment and set the correct port:
+      # - "traefik.http.services.front.loadbalancer.server.port=80"
+
+      # Security headers (adjust as needed)
+      - "traefik.http.middlewares.sec-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.sec-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.sec-headers.headers.stsPreload=true"
+      - "traefik.http.middlewares.sec-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.sec-headers.headers.frameDeny=true"
+      - "traefik.http.middlewares.sec-headers.headers.referrerPolicy=no-referrer"
+      - "traefik.http.routers.front.middlewares=sec-headers@docker"
 
   collector:
     image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
@@ -66,7 +130,7 @@ services:
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}
       SEMS_PASSWORD: ${SEMS_PASSWORD}
       SEMS_STATION_ID: ${SEMS_STATION_ID}
-    stop_grace_period: "30s"   # let the current tick finish
+    stop_grace_period: "30s"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/actuator/health || exit 1"]
       interval: 10s
@@ -75,7 +139,11 @@ services:
       start_period: 15s
     networks:
       - appnet
+    # internal only (no labels)
 
 networks:
   appnet:
     driver: bridge
+
+volumes:
+  traefik_letsencrypt:
