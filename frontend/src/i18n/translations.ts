@@ -31,6 +31,7 @@ const resources = {
     'layout.brand': 'PV Management',
     'topbar.title': 'Energy Dashboard',
     'topbar.subtitle': 'Track production, consumption, and environmental impact in real time.',
+    'topbar.demoAccount': 'Demo account',
     'auth.login.title': 'Welcome back',
     'auth.login.subtitle': 'Monitor your photovoltaic system anywhere, anytime.',
     'auth.form.email': 'Email',
@@ -68,6 +69,13 @@ const resources = {
     'settings.credentials.account': 'Account email used for SEMS login',
     'settings.credentials.password': 'Application password',
     'settings.credentials.stationId': 'Identifier for the power station being monitored',
+    'demo.login.title': 'Setting up your demo',
+    'demo.login.description': 'We are validating your access key and preparing demo data.',
+    'demo.login.progress': 'You will be redirected in a moment…',
+    'demo.invalid.title': 'Demo link not available',
+    'demo.invalid.description':
+      'The demo link is invalid, expired, or has reached its activation limit.',
+    'demo.invalid.backToLogin': 'Back to login',
   },
   de: {
     'app.loadingDashboard': 'Dashboard wird geladen...',
@@ -99,6 +107,7 @@ const resources = {
     'layout.brand': 'PV Management',
     'topbar.title': 'Energie-Dashboard',
     'topbar.subtitle': 'Verfolgen Sie Produktion, Verbrauch und Umwelteinfluss in Echtzeit.',
+    'topbar.demoAccount': 'Demozugang',
     'auth.login.title': 'Willkommen zurück',
     'auth.login.subtitle': 'Überwachen Sie Ihre Photovoltaikanlage jederzeit und überall.',
     'auth.form.email': 'E-Mail',
@@ -137,6 +146,14 @@ const resources = {
     'settings.credentials.account': 'E-Mail-Adresse für den SEMS-Login',
     'settings.credentials.password': 'Anwendungspasswort',
     'settings.credentials.stationId': 'Kennung der überwachten Anlage',
+    'demo.login.title': 'Demo wird vorbereitet',
+    'demo.login.description':
+      'Wir prüfen Ihren Zugriffsschlüssel und richten eine Demo-Umgebung ein.',
+    'demo.login.progress': 'Einen Moment bitte – Sie werden gleich weitergeleitet…',
+    'demo.invalid.title': 'Demo-Link nicht verfügbar',
+    'demo.invalid.description':
+      'Der Demo-Link ist ungültig, abgelaufen oder wurde zu oft verwendet.',
+    'demo.invalid.backToLogin': 'Zur Anmeldung',
   },
 } as const satisfies Record<Language, Record<string, string>>;
 

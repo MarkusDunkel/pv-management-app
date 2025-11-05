@@ -17,7 +17,9 @@ export const TopBar = () => {
           <span className={styles.avatar}>{user.displayName.charAt(0).toUpperCase()}</span>
           <div>
             <span className={styles.name}>{user.displayName}</span>
-            <span className={styles.email}>{user.email}</span>
+            <span className={styles.email}>
+              {user.roles.includes('ROLE_DEMO') ? t('topbar.demoAccount') : user.email}
+            </span>
           </div>
         </div>
       )}

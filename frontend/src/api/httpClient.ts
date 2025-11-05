@@ -1,19 +1,12 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
+import type { AuthResponse } from './types';
 import { useAuthStore, type AuthUser } from '@/store/authStore';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || '/api';
 
-type AuthResponse = {
-  token: string;
-  expiresAt: string;
-  roles: string[];
-  displayName: string;
-  email: string;
-};
-
 type RetryableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
-const refreshExclusionList = new Set(['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout']);
+const refreshExclusionList = new Set(['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout', '/demo/login']);
 
 const toAuthUser = (response: AuthResponse): AuthUser => ({
   email: response.email,
