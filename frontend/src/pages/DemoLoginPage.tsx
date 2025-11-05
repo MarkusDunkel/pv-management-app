@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import styles from './AuthPage.module.scss';
 import { authApi } from '@/api/auth';
+import { sleep } from '@/utils';
 
 const DemoLoginPage = () => {
   const { slug } = useParams();
@@ -25,15 +26,16 @@ const DemoLoginPage = () => {
     }
 
     if (isAuthenticated) {
-      return;
+      navigate('/dashboard', { replace: true });
     }
 
     authApi
       .demoLogin(slug)
-      .then((data) => {
+      .then(async (data) => {
         if (cancelled) {
           return;
         }
+        await sleep(2000);
         setSession(data.token, {
           email: data.email,
           displayName: data.displayName,
@@ -50,13 +52,15 @@ const DemoLoginPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [navigate, slug, setSession]);
+  }, [navigate, slug, setSession, isAuthenticated]);
 
   return (
-    <div className={styles.authCard}>
-      <h1>{t('demo.login.title')}</h1>
-      <p>{t('demo.login.description')}</p>
-      <span>{t('demo.login.progress')}</span>
+    <div className={styles.centered}>
+      <div className={styles.authCard}>
+        <h1>{t('demo.login.title')}</h1>
+        <p>{t('demo.login.description')}</p>
+        <span>{t('demo.login.progress')}</span>
+      </div>
     </div>
   );
 };
