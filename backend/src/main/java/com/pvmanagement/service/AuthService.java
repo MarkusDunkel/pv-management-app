@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,7 @@ public class AuthService {
         return buildAuthResult(saved);
     }
 
+    @Transactional
     public AuthResult login(AuthRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password())
@@ -101,6 +103,11 @@ public class AuthService {
         SecurityContextHolder.clearContext();
     }
 
+    @Transactional
+    public AuthResult issueTokensForUser(UserAccount user) {
+        return buildAuthResult(user);
+    }
+
     private AuthResult buildAuthResult(UserAccount user) {
         var refreshToken = refreshTokenService.createForUser(user);
         return buildAuthResult(user, refreshToken);
@@ -110,6 +117,7 @@ public class AuthService {
         var roles = user.getRoles().stream()
                 .map(role -> role.getName().name())
                 .collect(Collectors.toSet());
+        user.setLastLoginAt(OffsetDateTime.now());
         String token = jwtService.generateToken(user.getEmail(), roles, Map.of("displayName", user.getDisplayName()));
         Instant expiresAt = jwtService.extractExpiry(token);
         var authResponse = new AuthResponse(token, expiresAt, roles, user.getDisplayName(), user.getEmail());

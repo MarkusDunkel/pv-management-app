@@ -9,3 +9,6 @@ spring:
 logging:
   level:
     com.pvmanagement: DEBUG
+
+jwt:
+  refresh-token-cookie-secure: false

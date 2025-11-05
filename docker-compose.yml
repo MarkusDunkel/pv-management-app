@@ -47,7 +47,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-pv_management}
       POSTGRES_USER: ${DB_USERNAME:-pv_app}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-pv_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - /mnt/db/postgres:/var/lib/postgresql/data
     healthcheck:
@@ -76,9 +76,10 @@ services:
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}
       SEMS_PASSWORD: ${SEMS_PASSWORD}
       SEMS_STATION_ID: ${SEMS_STATION_ID}
-      JWT_SECRET: ${JWT_SECRET:-dev-secret}
+      JWT_SECRET: ${JWT_SECRET}
       APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:-admin@example.com}
-      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-super-secret-password}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD}
+      DEMO_SECRET: ${DEMO_SECRET}
     expose:
       - "8080"
     networks:

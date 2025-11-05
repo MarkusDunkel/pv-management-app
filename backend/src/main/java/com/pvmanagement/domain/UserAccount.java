@@ -42,6 +42,12 @@ public class UserAccount {
     private boolean emailVerified = false;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private OffsetDateTime lastLoginAt;
+
+    @Column(name = "demo_org", unique = true)
+    private String demoOrg;
+
+    private OffsetDateTime demoExpiresAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -35,17 +35,22 @@ logging:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:dev-secret}
+    secret: ${JWT_SECRET}
     access-token-ttl-seconds: ${JWT_TTL_SECONDS:900}
     refresh-token-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:2592000}
     refresh-token-cookie-secure: ${JWT_REFRESH_COOKIE_SECURE:true}
+  demo:
+    secret: ${DEMO_SECRET}
+    session-max-age-hours: ${DEMO_SESSION_MAX_AGE_HOURS:6}
+    default-max-activations: ${DEMO_DEFAULT_MAX_ACTIVATIONS:1000}
+    key-valid-days: ${DEMO_KEY_VALID_DAYS:180}
 
 sems:
   base-url: ${SEMS_BASE_URL:https://eu.semsportal.com/api/v2}
   client: ${SEMS_CLIENT:ios}
   version: ${SEMS_VERSION:v2.1.0}
   language: ${SEMS_LANGUAGE:en}
-  station-id: ${SEMS_STATION_ID:changeme}
-  account: ${SEMS_ACCOUNT:changeme}
-  password: ${SEMS_PASSWORD:changeme}
+  station-id: ${SEMS_STATION_ID}
+  account: ${SEMS_ACCOUNT}
+  password: ${SEMS_PASSWORD}
   refresh-interval-ms: ${SEMS_REFRESH_INTERVAL_MS:180000}
