@@ -28,7 +28,7 @@ type Props = SingleProps | MultipleProps;
 
 export const DashboardAccordion = (props: Props) => {
   const { items, className } = props;
-  const rootClassName = cn('flex w-full flex-col gap-4 p-4', className);
+  const rootClassName = cn('flex min-w-fit flex-col gap-4 p-4', className);
   const renderItems = () =>
     items.map(({ value, title, content, triggerClassName }) => (
       <AccordionItem key={value} value={value}>

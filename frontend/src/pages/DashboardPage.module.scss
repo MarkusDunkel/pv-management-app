@@ -67,6 +67,8 @@
 
 .dashboard-page__flow-chart-card {
   padding: 0.8rem !important;
+  height: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .dashboard-page__status-card {
@@ -142,6 +144,7 @@
   gap: 1.25rem;
   height: 30vh;
   min-height: 400px;
+  min-width: 700px;
 }
 
 .dashboard-page__chart-wrapper {
