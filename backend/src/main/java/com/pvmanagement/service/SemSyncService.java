@@ -1,6 +1,7 @@
 package com.pvmanagement.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.pvmanagement.config.SemsProperties;
 import com.pvmanagement.domain.PowerStation;
 import com.pvmanagement.domain.PowerflowSnapshot;
 import com.pvmanagement.domain.SemSyncLog;
@@ -8,12 +9,13 @@ import com.pvmanagement.repository.PowerStationRepository;
 import com.pvmanagement.repository.PowerflowSnapshotRepository;
 import com.pvmanagement.repository.SemSyncLogRepository;
 import com.pvmanagement.sems.SemsClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pvmanagement.sems.exception.AuthorizationExpiredException;
+import com.pvmanagement.sems.exception.TransientUpstreamException;
 import org.springframework.stereotype.Service;
 
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,9 +27,6 @@ import java.util.regex.Pattern;
 
 @Service
 public class SemSyncService {
-
-    private static final Logger log = LoggerFactory.getLogger(SemSyncService.class);
-
     private final SemsClient semsClient;
     private final PowerStationRepository powerStationRepository;
     private final PowerflowSnapshotRepository powerflowSnapshotRepository;
@@ -36,31 +35,44 @@ public class SemSyncService {
     public SemSyncService(SemsClient semsClient,
                           PowerStationRepository powerStationRepository,
                           PowerflowSnapshotRepository powerflowSnapshotRepository,
-                          SemSyncLogRepository semSyncLogRepository) {
+                          SemSyncLogRepository semSyncLogRepository,
+            SemsProperties properties) {
         this.semsClient = semsClient;
         this.powerStationRepository = powerStationRepository;
         this.powerflowSnapshotRepository = powerflowSnapshotRepository;
         this.semSyncLogRepository = semSyncLogRepository;
     }
 
+    @Retry(name = "semsSync") // exceptions are configured in application.yml
     @Transactional
-    @Retry(name = "semsSync")
     public void triggerSync() {
-        PowerStation station = null;
         try {
-            JsonNode response = semsClient.fetchMonitorDetail();
-            var data = response.path("data");
-            if (data.isMissingNode()) {
-                throw new IllegalStateException("SEMS response missing data node");
-            }
-            var stationNode = data.path("info");
-            station = persistPowerStation(stationNode);
+            JsonNode resp = semsClient.fetchMonitorDetail();
+
+            JsonNode data = resp.path("data");
+
+            // Persist domain data
+            JsonNode stationNode = data.path("info");
+            var station = persistPowerStation(stationNode);
             persistPowerflowSnapshot(station, data.path("powerflow"));
-            recordSync(station, "SUCCESS", null);
-        } catch (Exception ex) {
-            log.error("SEMS sync failed", ex);
-            recordSync(station, "FAILED", ex.getMessage());
-            throw new IllegalStateException("SEMS sync failed", ex);
+
+            recordSync(station, "SUCCESS", null); // consider REQUIRES_NEW inside recordSync
+
+        } catch (AuthorizationExpiredException e) {
+            // Non-retryable: let it bubble so Retry won't re-run (configured via YAML)
+            throw e;
+
+        } catch (WebClientResponseException.TooManyRequests e) {
+            throw new TransientUpstreamException("SEMS API rate limit exceeded (HTTP 429)", e);
+
+        } catch (WebClientResponseException e) {
+            // Treat 5xx as transient; 4xx (other than 429) as non-retryable
+            if (e.getStatusCode().is5xxServerError()) {
+                throw new TransientUpstreamException(
+                        "SEMS upstream error " + e.getRawStatusCode() + " " + e.getStatusText(), e
+                );
+            }
+            throw e;
         }
     }
 
@@ -139,7 +151,7 @@ public class SemSyncService {
         Matcher m = FIRST_NUMBER.matcher(text);
         if (!m.find()) return null;
 
-        String num = m.group(); // e.g. "1766.08", "1,766.08", "1766,08"
+        String num = m.group();
 
         // Normalize separators:
         boolean hasDot = num.indexOf('.') >= 0;

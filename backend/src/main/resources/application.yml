@@ -54,3 +54,18 @@ sems:
   account: ${SEMS_ACCOUNT}
   password: ${SEMS_PASSWORD}
   refresh-interval-ms: ${SEMS_REFRESH_INTERVAL_MS:180000}
+
+resilience4j.retry:
+  instances:
+    semsSync:
+      maxAttempts: 3
+      waitDuration: 2s
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2.0
+      maxWaitDuration: 15s
+      randomizedWait: 500ms         # jitter
+      retryExceptions:
+        - com.pvmanagement.sems.exception.TransientUpstreamException
+      ignoreExceptions:
+        - com.pvmanagement.sems.exception.AuthorizationExpiredException
+        - com.pvmanagement.sems.exception.UpstreamDataMissingException
