@@ -14,7 +14,7 @@ import styles from '@/pages/DashboardPage.module.scss';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDashboardStore, type PowerflowPoint } from '@/store/dashboardStore';
 import { useEffect, useMemo, useState } from 'react';
-import { endOfDay, isAfter, isBefore, startOfDay } from 'date-fns';
+import { endOfDay, isAfter, isBefore, startOfDay, subDays } from 'date-fns';
 import { DatePicker } from '@/components/ui/shadcn/date-picker';
 import { CustomTooltip } from '../ui/recharts/CustomTooltip';
 import { CustomLegend } from '../ui/recharts/CustomLegend';
@@ -83,10 +83,12 @@ export const TrendChart = () => {
 
     const first = new Date(powerflowSeries[0].timestamp);
     const last = new Date(powerflowSeries[powerflowSeries.length - 1].timestamp);
+    const to = startOfDay(last);
+    const from = startOfDay(subDays(to, 7));
 
     return {
-      from: startOfDay(first),
-      to: startOfDay(last),
+      from: first >= startOfDay(subDays(to, 7)) ? first : from,
+      to,
     };
   }, [powerflowSeries]);
 
