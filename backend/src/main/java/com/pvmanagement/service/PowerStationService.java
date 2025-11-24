@@ -25,54 +25,55 @@ public class PowerStationService {
 
     public PowerStationDto getPowerStation(Long id) {
         var station = powerStationRepository.findById(id)
-                                            .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
         return toDto(station);
     }
 
     public List<PowerStationDto> listPowerStations() {
         return powerStationRepository.findAll()
-                                     .stream()
-                                     .map(this::toDto)
-                                     .toList();
+                .stream()
+                .map(this::toDto)
+                .toList();
     }
 
     public DashboardSummaryDto buildDashboard(Long powerStationId) {
         var station = powerStationRepository.findById(powerStationId)
-                                            .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Power station not found"));
         var snapshot = powerflowSnapshotRepository.findFirstByPowerStationOrderByPowerflowTimestampDesc(station);
         OffsetDateTime to = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime from = OffsetDateTime.of(1970,
-                                                1,
-                                                1,
-                                                0,
-                                                0,
-                                                0,
-                                                0,
-                                                ZoneOffset.UTC);
-        var history = powerflowSnapshotRepository.findByPowerStationAndPowerflowTimestampBetweenOrderByPowerflowTimestampAsc(station,
-                                                                                                                             from,
-                                                                                                                             to);
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                ZoneOffset.UTC);
+        var history =
+                powerflowSnapshotRepository.findByPowerStationAndPowerflowTimestampBetweenOrderByPowerflowTimestampAsc(station,
+                        from,
+                        to);
 
         CurrentMeasurementsDto current = snapshot.map(snap -> new CurrentMeasurementsDto(snap.getPowerflowTimestamp(),
-                                                                                         snap.getPvW(),
-                                                                                         snap.getBatteryW(),
-                                                                                         snap.getLoadW(),
-                                                                                         snap.getGridW(),
-                                                                                         snap.getSocPercent()))
-                                                 .orElse(null);
+                        snap.getPvW(),
+                        snap.getBatteryW(),
+                        snap.getLoadW(),
+                        snap.getGridW(),
+                        snap.getSocPercent()))
+                .orElse(null);
 
         List<HistoryResponseDto> historyResponse = history.stream()
-                                                          .map(point -> new HistoryResponseDto(point.getPowerflowTimestamp(),
-                                                                                               point.getPvW(),
-                                                                                               point.getBatteryW(),
-                                                                                               point.getLoadW(),
-                                                                                               point.getGridW(),
-                                                                                               point.getSocPercent()))
-                                                          .toList();
+                .map(point -> new HistoryResponseDto(point.getPowerflowTimestamp(),
+                        point.getPvW(),
+                        point.getBatteryW(),
+                        point.getLoadW(),
+                        point.getGridW(),
+                        point.getSocPercent()))
+                .toList();
 
         return new DashboardSummaryDto(toDto(station),
-                                       current,
-                                       historyResponse);
+                current,
+                historyResponse);
     }
 
     private Double toDouble(Number value) {
@@ -83,15 +84,15 @@ public class PowerStationService {
 
     private PowerStationDto toDto(PowerStation station) {
         return new PowerStationDto(station.getId(),
-                                   station.getStationname(),
-                                   station.getAddress(),
-                                   station.getLatitude(),
-                                   station.getLongitude(),
-                                   station.getCapacityKWp(),
-                                   station.getBatteryCapacityKWh(),
-                                   station.getStatus(),
-                                   station.getOrgName(),
-                                   station.getTurnonTime(),
-                                   station.getCreateTime());
+                station.getStationname(),
+                station.getAddress(),
+                station.getLatitude(),
+                station.getLongitude(),
+                station.getCapacityKWp(),
+                station.getBatteryCapacityKWh(),
+                station.getStatus(),
+                station.getOrgName(),
+                station.getTurnonTime(),
+                station.getCreateTime());
     }
 }
