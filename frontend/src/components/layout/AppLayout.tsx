@@ -17,7 +17,6 @@ export const AppLayout = ({ children, isAuthenticated }: Props) => {
     <div className={styles.appShell}>
       <SidebarNav />
       <div className={styles.mainContent}>
-        <TopBar />
         <main className={styles.mainArea}>{children}</main>
       </div>
     </div>

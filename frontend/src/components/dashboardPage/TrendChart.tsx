@@ -89,6 +89,8 @@ export const TrendChart = () => {
     return {
       from: first >= startOfDay(subDays(to, 7)) ? first : from,
       to,
+      first,
+      last,
     };
   }, [powerflowSeries]);
 
@@ -180,7 +182,7 @@ export const TrendChart = () => {
   const timeSeriesLengthDays = (fromDate && toDate && diffInDaysLocal(fromDate, toDate)) || 0;
 
   return (
-    <section className={styles['dashboard-page__chart-card']}>
+    <section className={`${styles['dashboard-page__chart-card']}`}>
       <div className={`${styles['dashboard-page__chart-wrapper']} card`}>
         <div className={styles['dashboard-page__chart-content']}>
           <div className={styles['dashboard-page__chart-filters']}>
@@ -188,16 +190,16 @@ export const TrendChart = () => {
               label={t('dashboard.powerFlowRangeFrom')}
               date={fromDate}
               onDateChange={handleFromDateChange}
-              minDate={chartRange.from}
-              maxDate={chartRange.to}
+              minDate={chartRange.first}
+              maxDate={chartRange.last}
               disabled={!chartRange.from}
             />
             <DatePicker
               label={t('dashboard.powerFlowRangeTo')}
               date={toDate}
               onDateChange={handleToDateChange}
-              minDate={chartRange.from}
-              maxDate={chartRange.to}
+              minDate={chartRange.first}
+              maxDate={chartRange.last}
               disabled={!chartRange.to}
             />
           </div>
@@ -209,7 +211,6 @@ export const TrendChart = () => {
                   data={filteredSeries}
                   margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="grey" yAxisId="power" />
                   <XAxis
                     dataKey="timestamp"
                     type="number"
@@ -253,11 +254,15 @@ export const TrendChart = () => {
                     allowDecimals={false}
                     hide={filteredSeries.every((point) => point.socPercent == null)}
                   />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--neutral-400))"
+                    yAxisId="power"
+                  />
                   <Tooltip
                     content={<CustomTooltip activeKeys={activeKeys} units={units} />}
                     contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
                   />
-
                   <Legend
                     content={
                       <CustomLegend activeKeys={activeKeys} onLegendItemClick={handleLegendClick} />
@@ -275,7 +280,6 @@ export const TrendChart = () => {
                     strokeWidth={0}
                     fillOpacity={activeKeys.socPercent ? 0.5 : 0}
                   />
-
                   <Line
                     yAxisId="power"
                     type="monotone"
@@ -288,7 +292,6 @@ export const TrendChart = () => {
                     connectNulls={false}
                     activeDot={activeKeys.pvW ? undefined : false}
                   />
-
                   <Line
                     yAxisId="power"
                     type="monotone"

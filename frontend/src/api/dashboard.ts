@@ -68,10 +68,4 @@ export const dashboardApi = {
     );
     return data;
   },
-  async getCurrent(powerStationId: number) {
-    const { data } = await httpClient.get<CurrentMeasurementsDto>(
-      `/measurements/current/${powerStationId}`,
-    );
-    return data;
-  },
 };

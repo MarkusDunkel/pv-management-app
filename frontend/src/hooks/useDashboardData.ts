@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { dashboardApi } from '@/api/dashboard';
 import { useDashboardStore } from '@/store/dashboardStore';
+import { falseToNull } from '@/lib/utils';
 
 export const useDashboardData = (powerStationId: number) => {
   const { setLoading, setPowerflow, setPowerflowHistory, setForecast } = useDashboardStore();
@@ -18,7 +19,7 @@ export const useDashboardData = (powerStationId: number) => {
           setPowerflow({
             timestamp: current.timestamp,
             pvW: current.pvPowerW ?? null,
-            batteryW: current.batteryPowerW ?? null,
+            batteryW: current.batteryPowerW ? -current.batteryPowerW : null,
             loadW: current.loadPowerW ?? null,
             gridW: current.gridPowerW ?? null,
             socPercent: current.stateOfCharge ?? null,
@@ -31,10 +32,37 @@ export const useDashboardData = (powerStationId: number) => {
               timestamp: point.timestamp,
               pvW: point.pvW ?? null,
               batteryW: point.batteryW ?? null,
-              loadW: point.loadW ?? null,
+              loadW: point.loadW ? -point.loadW : null,
               gridW: point.gridW ?? null,
               socPercent: point.socPercent ?? null,
             })),
+            // .map(({ timestamp, pvW, batteryW, loadW, gridW, socPercent }, index, arr) => {
+            //   if (index === 0) {
+            //     return {
+            //       timestamp,
+            //       pvW,
+            //       batteryW,
+            //       loadW,
+            //       gridW,
+            //       socPercent,
+            //     };
+            //   }
+            //   const priorSocPercent = arr[index - 1].socPercent;
+            //   const socDiff =
+            //     (socPercent && priorSocPercent && socPercent - priorSocPercent) ?? null;
+
+            //   const batteryWNew =
+            //     (batteryW && socDiff && falseToNull(socDiff < 0) && -batteryW) ?? batteryW;
+
+            //   return {
+            //     timestamp,
+            //     pvW,
+            //     batteryW: batteryWNew,
+            //     loadW,
+            //     gridW,
+            //     socPercent,
+            //   };
+            // })
           );
         }
 

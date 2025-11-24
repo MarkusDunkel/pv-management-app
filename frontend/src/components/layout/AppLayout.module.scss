@@ -21,7 +21,7 @@
 }
 
 .mainArea {
-  height: calc(100vh - 100px);
+  height: 100vh;
   width: calc(100vw - 280px);
   background-color: hsl(var(--card));
   overflow: auto;

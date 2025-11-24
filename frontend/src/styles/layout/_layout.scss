@@ -1,0 +1,8 @@
+@mixin accordionItem {
+  width: calc(100% - 3rem);
+  flex: 1;
+  height: 100%;
+  margin: 1.5rem;
+  margin-top: 0.4rem;
+  padding: 1rem;
+}

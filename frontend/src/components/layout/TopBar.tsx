@@ -2,15 +2,20 @@ import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import styles from './TopBar.module.scss';
 
-export const TopBar = () => {
+interface Props {
+  title: string;
+  subTitle: string;
+}
+
+export const TopBar = ({ title, subTitle }: Props) => {
   const user = useAuthStore((state) => state.user);
   const { t } = useTranslation();
 
   return (
     <header className={styles.topBar}>
       <div>
-        <h1>{t('topbar.title')}</h1>
-        <p>{t('topbar.subtitle')}</p>
+        <h1>{title}</h1>
+        <p>{subTitle}</p>
       </div>
       {user && (
         <div className={styles.userChip}>

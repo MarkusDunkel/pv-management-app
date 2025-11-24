@@ -15,10 +15,10 @@
   --muted: 214 32% 91%;
   --muted-foreground: 215 19% 35%;
 
-  --primary: 199 89% 48%;
+  --primary: 178.21 30.32% 43.33%;
   --primary-foreground: 210 40% 98%;
-  --primary-soft: 199 89% 48% / 0.12;
-  --primary-soft-strong: 199 89% 48% / 0.2;
+  --primary-soft: 178.21 30.32% 43.33% / 0.12;
+  --primary-soft-strong: 178.21 30.32% 43.33% / 0.2;
 
   --secondary: 142 71% 45%;
   --secondary-foreground: 138 76% 97%;
@@ -60,16 +60,16 @@
   --radius-full: 999px;
   --radius: 0.75rem;
 
-  --imperial-red: #f94144ff;
-  --orange-crayola: #f3722cff;
-  --carrot-orange: #f8961eff;
-  --coral: #f9844aff;
-  --saffron: #f9c74fff;
-  --pistachio: #90be6dff;
-  --zomp: #43aa8bff;
-  --dark-cyan: #4d908eff;
-  --paynes-gray: #577590ff;
-  --cerulean: #277da1ff;
+  --imperial-red: 359.02 93.88% 61.57%;
+  --orange-crayola: 21.11 89.24% 56.27%;
+  --carrot-orange: 33.03 93.97% 54.51%;
+  --coral: 19.89 93.58% 63.33%;
+  --saffron: 42.35 93.41% 64.31%;
+  --pistachio: 94.07 38.39% 58.63%;
+  --zomp: 161.94 43.46% 46.47%;
+  --dark-cyan: 178.21 30.32% 43.33%;
+  --paynes-gray: 208.42 24.68% 45.29%;
+  --cerulean: 197.7 61% 39.22%;
 }
 
 @layer base {
@@ -89,15 +89,48 @@
   }
 }
 
-.recharts-cartesian-grid-horizontal line:first-of-type {
-  opacity: 0;
-  pointer-events: none;
+.dashboard-page-globals {
+  .recharts-cartesian-grid-horizontal line:first-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .recharts-cartesian-grid-vertical line:nth-last-child(2),
+  .recharts-cartesian-grid-vertical line:last-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
-.recharts-cartesian-grid-vertical line:nth-last-child(2),
-.recharts-cartesian-grid-vertical line:last-of-type {
-  opacity: 0;
-  pointer-events: none;
+.diurnal-profile-globals {
+  .recharts-cartesian-grid-horizontal line:first-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .recharts-cartesian-grid-vertical line:first-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.performance-chart-globals {
+  .recharts-cartesian-grid-horizontal line:first-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .recharts-cartesian-grid-vertical line:last-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.performance-bar-globals {
+  .recharts-cartesian-grid-horizontal line:first-of-type {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 /* Calendar (shadcn date picker) overrides */

@@ -138,7 +138,7 @@
   font-weight: 600;
 }
 
-.dashboard-page__chart-card {
+.dashboard-page__chart-card:global {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -153,7 +153,7 @@
   height: 100%;
   margin: 1.5rem;
   margin-top: 0.4rem;
-  padding: 1.1rem;
+  padding: 1rem;
 }
 
 .dashboard-page__chart-content {

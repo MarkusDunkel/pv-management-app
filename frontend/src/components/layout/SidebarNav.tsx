@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { BatteryCharging, LogOut, Settings, Sun } from 'lucide-react';
+import { BatteryCharging, LogOut, Settings, SlidersHorizontal, Sun } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -14,7 +14,6 @@ export const SidebarNav = () => {
       await authApi.logout();
     } catch (error) {
       console.log('logout error: ', error);
-      // Best effort: ignore network errors and still clear client session
     } finally {
       clearSession();
     }
@@ -22,6 +21,7 @@ export const SidebarNav = () => {
 
   const navItems = [
     { to: '/dashboard', icon: Sun, label: t('layout.nav.dashboard') },
+    { to: '/panel-optimizer', icon: SlidersHorizontal, label: t('layout.nav.panelOptimizer') },
     { to: '/settings', icon: Settings, label: t('layout.nav.settings') },
   ];
 

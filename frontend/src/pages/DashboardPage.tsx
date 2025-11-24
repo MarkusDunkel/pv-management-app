@@ -1,12 +1,11 @@
-import { dashboardApi } from '@/api/dashboard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { DashboardAccordion } from '@/components/ui/DashboardAccordion';
 import { CurrentInfo } from '@/components/dashboardPage/CurrentInfo';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDashboardStore } from '@/store/dashboardStore';
-import { useEffect } from 'react';
 import { TrendChart } from '@/components/dashboardPage/TrendChart';
+import { TopBar } from '@/components/layout/TopBar';
 
 const DEFAULT_POWER_STATION_ID = 1;
 
@@ -15,22 +14,6 @@ const DashboardPage = () => {
   const { t } = useTranslation();
 
   useDashboardData(DEFAULT_POWER_STATION_ID);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        await dashboardApi.getCurrent(DEFAULT_POWER_STATION_ID);
-      } catch (error) {
-        console.error('Failed to refresh current measurements', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const interval = window.setInterval(load, 60_000);
-    return () => window.clearInterval(interval);
-  }, [setLoading]);
 
   if (isLoading && !currentPowerflow) {
     return <LoadingScreen message={t('dashboard.loadingLiveData')} />;
@@ -49,7 +32,12 @@ const DashboardPage = () => {
     },
   ];
 
-  return <DashboardAccordion items={accordionItems} type={'multiple'} />;
+  return (
+    <div className={'dashboard-page-globals'}>
+      <TopBar title={t('dashboard.title')} subTitle={t('dashboard.subtitle')} />
+      <DashboardAccordion items={accordionItems} type={'multiple'} />
+    </div>
+  );
 };
 
 export default DashboardPage;
