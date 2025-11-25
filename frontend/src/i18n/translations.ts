@@ -79,6 +79,8 @@ const resources = {
     'demo.invalid.backToLogin': 'Back to login',
     'optimizer.title': 'Panel Size Optimizer',
     'optimizer.subtitle': 'Retrieve your optimal panel size.',
+    'optimizer.infoDialog.title': 'Optimization info',
+    'optimizer.infoDialog.ariaLabel': 'Show optimization help',
     'optimizer.parameters.title': 'Parameters',
     'optimizer.parameters.description':
       'Provide economic and system assumptions for the simulation.',
@@ -185,6 +187,8 @@ const resources = {
     'demo.invalid.backToLogin': 'Zur Anmeldung',
     'optimizer.title': 'Panelgrößen-Optimierer',
     'optimizer.subtitle': 'Finden Sie Ihre optimale Anlagengröße.',
+    'optimizer.infoDialog.title': 'Optimierungshilfe',
+    'optimizer.infoDialog.ariaLabel': 'Optimierungshilfe öffnen',
     'optimizer.parameters.title': 'Parameter',
     'optimizer.parameters.description': 'Legen Sie wirtschaftliche und technische Annahmen fest.',
     'optimizer.parameters.electricityCosts': 'Stromkosten (€/kWh)',

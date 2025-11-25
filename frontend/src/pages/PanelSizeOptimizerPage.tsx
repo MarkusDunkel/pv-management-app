@@ -4,11 +4,13 @@ import {
   type PanelOptimizationResponse,
 } from '@/api/optimizations';
 import { TopBar } from '@/components/layout/TopBar';
+import { InfoDialog } from '@/components/InfoDialog';
 import { DiurnalProfile } from '@/components/optimizerPage/DiurnalProfile';
 import { Parameters } from '@/components/optimizerPage/Parameters';
 import { PerformanceChart } from '@/components/optimizerPage/PerformanceChart';
 import { DashboardAccordion } from '@/components/ui/DashboardAccordion';
 import { Slider } from '@/components/ui/shadcn/slider';
+import { optimizationInfoMarkdown } from '@/content/optimizationInfo';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEffect, useState } from 'react';
 import styles from './PanelSizeOptimizerPage.module.scss';
@@ -116,7 +118,17 @@ const PanelSizeOptimizerPage = () => {
 
   return (
     <div className={'optimizer-page-globals'}>
-      <TopBar title={t('optimizer.title')} subTitle={t('optimizer.subtitle')} />
+      <TopBar
+        title={t('optimizer.title')}
+        subTitle={t('optimizer.subtitle')}
+        actions={
+          <InfoDialog
+            title={t('optimizer.infoDialog.title')}
+            markdown={optimizationInfoMarkdown}
+            buttonAriaLabel={t('optimizer.infoDialog.ariaLabel')}
+          />
+        }
+      />
       <div className={styles.layout}>
         <section className={`${styles.parametersCard} card`}>
           <Parameters

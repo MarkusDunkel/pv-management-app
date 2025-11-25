@@ -21,6 +21,18 @@
   }
 }
 
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
 .userChip {
   display: flex;
   align-items: center;

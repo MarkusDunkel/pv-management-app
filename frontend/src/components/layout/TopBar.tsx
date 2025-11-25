@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import styles from './TopBar.module.scss';
@@ -5,17 +6,21 @@ import styles from './TopBar.module.scss';
 interface Props {
   title: string;
   subTitle: string;
+  actions?: ReactNode;
 }
 
-export const TopBar = ({ title, subTitle }: Props) => {
+export const TopBar = ({ title, subTitle, actions }: Props) => {
   const user = useAuthStore((state) => state.user);
   const { t } = useTranslation();
 
   return (
     <header className={styles.topBar}>
-      <div>
-        <h1>{title}</h1>
-        <p>{subTitle}</p>
+      <div className={styles.titleWrapper}>
+        <div>
+          <h1>{title}</h1>
+          <p>{subTitle}</p>
+        </div>
+        {actions ? <div className={styles.actions}>{actions}</div> : null}
       </div>
       {user && (
         <div className={styles.userChip}>
