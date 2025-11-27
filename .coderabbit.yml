@@ -1,0 +1,92 @@
+version: 1
+
+reviewer:
+  enabled: true
+  auto_review: true
+  request_changes: true        # Let the AI block PRs on critical issues
+  max_comments: 40             # Slightly higher for multi-language projects
+  context_window: extended
+  summarization: true
+  require_tests: true
+  test_detection:
+    java:
+      patterns:
+        - "**/src/test/java/**"
+    javascript:
+      patterns:
+        - "**/*.test.ts"
+        - "**/*.test.js"
+        - "**/*.spec.ts"
+        - "**/*.spec.js"
+
+filters:
+  ignore:
+    # Java build artifacts
+    - "**/target/**"
+    - "**/build/**"
+    - "**/out/**"
+
+    # Node build artifacts
+    - "**/dist/**"
+    - "**/.next/**"
+    - "**/node_modules/**"
+    - "**/coverage/**"
+
+    # General non-reviewable stuff
+    - "**/*.md"
+    - "**/*.yml"
+    - "**/*.yaml"
+    - "**/*.json"
+    - "**/*.lock"
+    - "*.log"
+    - "**/public/**"
+    - "**/generated/**"
+    - "**/*.class"
+
+languages:
+  java:
+    enabled: true
+    rules:
+      - name: spring_security_best_practices
+        enabled: true
+      - name: null_pointer_risk
+        enabled: true
+      - name: thread_safety
+        enabled: true
+      - name: resource_management
+        enabled: true
+      - name: exception_handling
+        enabled: true
+
+  javascript:
+    enabled: true
+    rules:
+      - name: api_contract_consistency
+        enabled: true
+      - name: error_handling
+        enabled: true
+      - name: performance
+        enabled: true
+      - name: react_best_practices
+        enabled: true
+
+comments:
+  style: concise
+  tone: constructive
+  max_line_length: 160
+  explain_code: false
+  categories:
+    - correctness
+    - errors
+    - architecture
+    - SOLID
+    - performance
+    - readability
+    - maintainability
+    - security
+    - best_practices
+
+re_review:
+  on_new_commits: true
+  on_resolved_threads: true
+  only_when_requested_changes: false
