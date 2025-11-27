@@ -74,7 +74,7 @@ comments:
   style: concise
   tone: constructive
   max_line_length: 160
-  explain_code: false
+  explain_code: true
   categories:
     - correctness
     - errors
