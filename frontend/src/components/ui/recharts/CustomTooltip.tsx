@@ -11,10 +11,10 @@ interface PayloadItem {
 interface Props {
   active?: boolean | undefined;
   payload?: PayloadItem[];
-  label?: string;
+  label?: string | number;
   activeKeys?: Record<string, boolean>;
   units: Record<string, string> | string;
-  titleFormatter?: (title: string | number) => string;
+  titleFormatter?: (title: number | string) => string;
   valueFormatter?: (val: number) => string;
 }
 
@@ -48,7 +48,7 @@ export const CustomTooltip = ({
   return (
     <div className={styles['minimalTooltip']}>
       <div className={styles['minimalTooltip__label']}>
-        {titleFormatter ? titleFormatter(label || '') : toDateTimeString(new Date(label || ''))}
+        {titleFormatter && label ? titleFormatter(label) : toDateTimeString(new Date(label || ''))}
       </div>
       {orderedPayload
         .filter((v) => !!v)

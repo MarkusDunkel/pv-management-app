@@ -3,7 +3,9 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Label,
   Legend,
+  LegendPayload,
   Line,
   LineChart,
   ReferenceLine,
@@ -13,7 +15,7 @@ import {
   YAxis,
 } from 'recharts';
 import styles from '@/pages/PanelSizeOptimizerPage.module.scss';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { PanelOptimizationResponse } from '@/api/optimizations';
 import { useTranslation } from '@/hooks/useTranslation';
 import { VerticalTick } from './VerticalTick';
@@ -27,14 +29,25 @@ interface Props {
 
 export const PerformanceChart = ({ data, activeIndex }: Props) => {
   const { t } = useTranslation();
+
   const performanceSeries = useMemo(() => {
     if (!data) return [];
     return data.pvCapacities.map((capacity, index) => ({
       capacity,
       index,
-      totalAmount: data.totalAmounts[index] ?? null,
+      total: data.totalAmounts[index] ?? null,
+      lack: data.lackAmounts[index] ?? null,
+      fit: data.fitAmounts[index] ?? null,
+      excess: data.excessAmounts[index] ?? null,
     }));
   }, [data]);
+
+  const [activeKeys, setActiveKeys] = useState<Record<string, boolean>>({
+    total: true,
+    excess: true,
+    lack: true,
+    fit: true,
+  });
 
   const selectedPerformance = useMemo(() => {
     if (!data || !data.pvCapacities.length) return null;
@@ -67,6 +80,18 @@ export const PerformanceChart = ({ data, activeIndex }: Props) => {
       },
     ];
   }, [selectedPerformance, t]);
+
+  const handleLegendClick = (event: LegendPayload) => {
+    const { dataKey } = event;
+
+    if (!dataKey) return;
+
+    setActiveKeys((prev) => ({
+      ...prev,
+      [dataKey as string]: !prev[dataKey as string],
+    }));
+  };
+
   return (
     <div className={`${styles['chartCard']} card`}>
       {performanceSeries.length && selectedPerformance ? (
@@ -80,23 +105,68 @@ export const PerformanceChart = ({ data, activeIndex }: Props) => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--neutral-400)" />
                 <XAxis
                   dataKey="capacity"
-                  tickFormatter={(value: number) => value.toLocaleString()}
+                  tickFormatter={(value: number) => value.toFixed(1)}
+                  interval={15}
+                  // label={
+                  //   <Label
+                  //     value="Temperature (°C)"
+                  //     position="bottom"
+                  //     style={{
+                  //       fontSize: 12,
+                  //       fontWeight: 400,
+                  //     }}
+                  //   />
+                  // }
                 />
-                <YAxis tickFormatter={(value: number) => value.toLocaleString()} width={70} />
+                <YAxis tickFormatter={(value: number) => value.toFixed(0) + ' €'} width={70} />
                 <Legend
                   content={
-                    <CustomLegend activeKeys={{ capacity: true }} onLegendItemClick={() => {}} />
+                    <CustomLegend activeKeys={activeKeys} onLegendItemClick={handleLegendClick} />
                   }
                 />
                 <Line
                   type="monotone"
-                  dataKey="totalAmount"
+                  dataKey="total"
                   name={t('optimizer.metrics.total')}
                   stroke="hsl(var(--graph-load))"
                   strokeWidth={2}
                   dot={false}
                   connectNulls={false}
-                  activeDot={{ r: 6 }}
+                  strokeOpacity={activeKeys.total ? 1 : 0}
+                  activeDot={activeKeys.total ? undefined : false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="fit"
+                  name={t('optimizer.metrics.fit')}
+                  stroke="hsl(var(--graph-battery))"
+                  strokeWidth={1.5}
+                  dot={false}
+                  connectNulls={false}
+                  strokeOpacity={activeKeys.fit ? 1 : 0}
+                  activeDot={activeKeys.fit ? undefined : false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="excess"
+                  name={t('optimizer.metrics.excess')}
+                  stroke="hsl(var(--graph-solar))"
+                  strokeWidth={1.5}
+                  dot={false}
+                  connectNulls={false}
+                  strokeOpacity={activeKeys.excess ? 1 : 0}
+                  activeDot={activeKeys.excess ? undefined : false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="lack"
+                  name={t('optimizer.metrics.lack')}
+                  stroke="hsl(var(--graph-grid))"
+                  strokeWidth={1.5}
+                  dot={false}
+                  connectNulls={false}
+                  strokeOpacity={activeKeys.lack ? 1 : 0}
+                  activeDot={activeKeys.lack ? undefined : false}
                 />
                 <ReferenceLine
                   x={performanceSeries[activeIndex].capacity}
@@ -106,59 +176,16 @@ export const PerformanceChart = ({ data, activeIndex }: Props) => {
                 <Tooltip
                   content={
                     <CustomTooltip
-                      activeKeys={{ totalAmount: true }}
-                      units={{ totalAmount: '' }}
-                      titleFormatter={(label) => `${label} W`}
-                      valueFormatter={(val) => `${Math.round(val)}`}
+                      activeKeys={activeKeys}
+                      units={'€'}
+                      titleFormatter={(val) => `${typeof val === 'number' ? val.toFixed(2) : ''} W`}
+                      valueFormatter={(val) => val.toFixed(2)}
                     />
                   }
                   contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-          <div className={`${styles.performanceBar} performance-bar-globals`}>
-            {barChartData.length ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={barChartData}
-                  layout="horizontal"
-                  margin={{ top: 12, right: 12, left: 12, bottom: 36 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="hsl(var(--neutral-400)"
-                    vertical={false}
-                  />
-                  <YAxis type="number" tickFormatter={(value: number) => value.toLocaleString()} />
-                  <XAxis
-                    dataKey="label"
-                    type="category"
-                    width={10}
-                    tick={<VerticalTick />}
-                    interval={0}
-                  />
-                  <Tooltip
-                    content={
-                      <CustomTooltip
-                        units={''}
-                        titleFormatter={(label) => `${label}`}
-                        valueFormatter={(val) => `${Math.round(val)}`}
-                      />
-                    }
-                    contentStyle={{ borderRadius: 12, borderColor: '#cbd5f5' }}
-                  />
-                  <ReferenceLine y={0} stroke="#888" strokeWidth={1} />
-                  <Bar dataKey="value" radius={10} barSize={15}>
-                    {barChartData.map((entry) => (
-                      <Cell key={entry.label} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className={styles.emptyState}>{t('optimizer.chart.empty')}</p>
-            )}
           </div>
         </div>
       ) : (
