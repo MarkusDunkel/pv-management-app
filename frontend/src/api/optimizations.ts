@@ -16,7 +16,7 @@ export interface DiurnalPoint {
 
 export interface PanelOptimizationResponse {
   diurnalAggregatedConsumption: DiurnalPoint[];
-  diurnalAggregatedPvProductions: DiurnalPoint[][];
+  diurnalAggregatedProductions: DiurnalPoint[][];
   pvCapacities: number[];
   fitAmounts: number[];
   excessAmounts: number[];

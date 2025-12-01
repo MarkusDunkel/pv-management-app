@@ -30,7 +30,7 @@ export const InfoDialog = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={buttonAriaLabel} className={className}>
+        <Button variant="invisible" size="icon" aria-label={buttonAriaLabel} className={className}>
           <Info className="h-4 w-4" />
         </Button>
       </DialogTrigger>

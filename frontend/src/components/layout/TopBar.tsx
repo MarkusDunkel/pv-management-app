@@ -16,11 +16,11 @@ export const TopBar = ({ title, subTitle, actions }: Props) => {
   return (
     <header className={styles.topBar}>
       <div className={styles.titleWrapper}>
-        <div>
+        <div className={styles.mainTitleWrapper}>
           <h1>{title}</h1>
-          <p>{subTitle}</p>
+          {actions ? <span className={styles.actions}>{actions}</span> : null}
         </div>
-        {actions ? <div className={styles.actions}>{actions}</div> : null}
+        <p>{subTitle}</p>
       </div>
       {user && (
         <div className={styles.userChip}>

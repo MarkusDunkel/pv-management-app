@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 public record PsoResponse(List<DayTimeValue> diurnalAggregatedConsumption,
-        List<List<DayTimeValue>> diurnalAggregatedPvProductions,
+        List<List<DayTimeValue>> diurnalAggregatedProductions,
         List<BigDecimal> pvCapacities,
         List<BigDecimal> fitAmounts,
         List<BigDecimal> excessAmounts,
