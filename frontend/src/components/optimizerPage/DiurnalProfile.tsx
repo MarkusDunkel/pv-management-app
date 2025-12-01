@@ -38,7 +38,7 @@ export const DiurnalProfile = ({ data, activeIndex }: Props) => {
         { value: point.value, ts: parseTimestamp(point.timestamp, index) },
       ]),
     );
-    const productionSeries = data.diurnalAggregatedPvProductions[activeIndex] ?? [];
+    const productionSeries = data.diurnalAggregatedProductions[activeIndex] ?? [];
     const productionMap = new Map(
       productionSeries.map((point, index) => [
         point.timestamp,

@@ -23,9 +23,12 @@
 
 .titleWrapper {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-direction: column;
+
+  .mainTitleWrapper {
+    display: flex;
+  }
 }
 
 .actions {
