@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  Label,
   Legend,
   LegendPayload,
   Line,
@@ -33,12 +34,12 @@ export const DiurnalProfile = ({ data, activeIndex }: Props) => {
 
   const diurnalChartData = useMemo(() => {
     const consumptionMap = new Map(
-      data.diurnalAggregatedConsumption.map((point, index) => [
+      data.diurnalConsumptionProfile.map((point, index) => [
         point.timestamp,
         { value: point.value, ts: parseTimestamp(point.timestamp, index) },
       ]),
     );
-    const productionSeries = data.diurnalAggregatedProductions[activeIndex] ?? [];
+    const productionSeries = data.diurnalProductionProfiles[activeIndex] ?? [];
     const productionMap = new Map(
       productionSeries.map((point, index) => [
         point.timestamp,
@@ -87,9 +88,19 @@ export const DiurnalProfile = ({ data, activeIndex }: Props) => {
                 new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
               }
               type="number"
-              domain={['auto', 'auto']}
+              domain={['dataMin', 'dataMax']}
+              // label={
+              //   <Label
+              //     value={t('optimizer.diurnalProfile.desc')}
+              //     position="bottom"
+              //     style={{
+              //       fontSize: 12,
+              //       fontWeight: 400,
+              //     }}
+              //   />
+              // }
             />
-            <YAxis tickFormatter={wattNumberLabel} width={70} />
+            <YAxis tickFormatter={(val: number) => `${Math.round(val)} kWh`} width={70} />
             <Legend
               content={
                 <CustomLegend activeKeys={activeKeys} onLegendItemClick={handleLegendClick} />

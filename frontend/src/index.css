@@ -108,6 +108,10 @@
     pointer-events: none;
   }
 
+  /* .recharts-legend-wrapper {
+    bottom: -30px !important;
+  } */
+
   .recharts-cartesian-grid-vertical line:first-of-type {
     opacity: 0;
     pointer-events: none;
@@ -120,7 +124,11 @@
     pointer-events: none;
   }
 
-  .recharts-cartesian-grid-vertical line:last-of-type {
+  /* .recharts-legend-wrapper {
+    bottom: -30px !important;
+  } */
+
+  .recharts-cartesian-grid-vertical line:first-of-type {
     opacity: 0;
     pointer-events: none;
   }

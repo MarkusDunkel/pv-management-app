@@ -14,16 +14,16 @@ import { optimizationInfoMarkdown } from '@/content/optimizationInfo';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEffect, useState } from 'react';
 import styles from './PanelSizeOptimizerPage.module.scss';
+import { numericObjectEquals } from '@/components/optimizerPage/utils';
 
 const DEFAULT_POWER_STATION_ID = 1;
 
 const DEFAULT_FORM: Record<keyof PanelOptimizationRequest, string> = {
   electricityCosts: '0.36',
   electricitySellingPrice: '0.10',
-  currentCapacity: '7000',
-  performanceRatio: '0.8',
+  currentCapacity: '7',
   reininvesttime: '25',
-  panelcost: '1.6',
+  panelcost: '2000',
 };
 
 export const parseTimestamp = (timestamp: string, index: number): number => {
@@ -46,7 +46,6 @@ const toPayload = (
   electricityCosts: Number(values.electricityCosts) || 0,
   electricitySellingPrice: Number(values.electricitySellingPrice) || 0,
   currentCapacity: Number(values.currentCapacity) || 0,
-  performanceRatio: Number(values.performanceRatio) || 0,
   reininvesttime: Number(values.reininvesttime) || 0,
   panelcost: Number(values.panelcost) || 0,
 });
@@ -57,28 +56,6 @@ const PanelSizeOptimizerPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formValues, setFormValues] = useState(DEFAULT_FORM);
-  const current = Number(formValues.currentCapacity);
-  const currentIndex = result?.pvCapacities.reduce(
-    (acc, val, index) => {
-      const diff = Math.abs(val - current);
-
-      if (diff < acc.minValue) {
-        return { minValue: diff, minIndex: index };
-      }
-      return acc;
-    },
-    { minValue: Infinity, minIndex: -1 },
-  ).minIndex;
-
-  const [selectedIndex, setSelectedIndex] = useState(currentIndex || 0);
-
-  useEffect(() => {
-    if (!currentIndex) {
-      setSelectedIndex(0);
-      return;
-    }
-    setSelectedIndex(currentIndex);
-  }, [currentIndex]);
 
   const handleRun = async () => {
     setError(null);
@@ -87,7 +64,20 @@ const PanelSizeOptimizerPage = () => {
     try {
       const data = await optimizationApi.run(DEFAULT_POWER_STATION_ID, toPayload(formValues));
       setResult(data);
-      setSelectedIndex(0);
+      const current = Number(data.request.currentCapacity);
+      const currentIndex = data.pvCapacities.reduce(
+        (acc, val, index) => {
+          const diff = Math.abs(val - current);
+
+          if (diff < acc.minValue) {
+            return { minValue: diff, minIndex: index };
+          }
+          return acc;
+        },
+        { minValue: Infinity, minIndex: -1 },
+      ).minIndex;
+
+      setSelectedIndex(currentIndex);
     } catch (runError) {
       console.error('Failed to run optimization', runError);
       setError(t('optimizer.error.generic'));
@@ -95,9 +85,12 @@ const PanelSizeOptimizerPage = () => {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     handleRun();
   }, []);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const sliderMax = result ? Math.max(result.pvCapacities.length - 1, 0) : 0;
 
@@ -116,6 +109,9 @@ const PanelSizeOptimizerPage = () => {
     },
   ];
 
+  const formValuesChanged =
+    result?.request &&
+    !numericObjectEquals(formValues, result.request as any as Record<string, string>);
   return (
     <div className={'optimizer-page-globals'}>
       <TopBar
@@ -139,6 +135,7 @@ const PanelSizeOptimizerPage = () => {
             }}
             error={error}
             isLoading={isLoading}
+            hasChanged={formValuesChanged}
           />
         </section>
 
@@ -150,7 +147,7 @@ const PanelSizeOptimizerPage = () => {
                 <p className="text-muted">{t('optimizer.slider.helper')}</p>
               </div>
               <div className={styles.sliderCard__number}>
-                <span>{result?.pvCapacities[selectedIndex].toFixed(1) + ' W'}</span>
+                <span>{result?.pvCapacities[selectedIndex].toFixed(1) + ' kW'}</span>
               </div>
             </div>
             <div className={styles.sliderRow}>

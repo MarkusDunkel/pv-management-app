@@ -105,11 +105,12 @@ export const PerformanceChart = ({ data, activeIndex }: Props) => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--neutral-400)" />
                 <XAxis
                   dataKey="capacity"
-                  tickFormatter={(value: number) => value.toFixed(1)}
-                  interval={15}
+                  tickFormatter={(value: number) => value.toFixed(0) + ' kWp'}
+                  type="number"
+                  domain={['dataMin', 'dataMax']}
                   // label={
                   //   <Label
-                  //     value="Temperature (°C)"
+                  //     value={t('optimizer.performanceGraph.desc')}
                   //     position="bottom"
                   //     style={{
                   //       fontSize: 12,

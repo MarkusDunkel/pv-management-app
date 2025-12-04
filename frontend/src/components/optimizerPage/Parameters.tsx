@@ -12,9 +12,17 @@ interface Props {
   >;
   error: string | null;
   isLoading: boolean;
+  hasChanged?: boolean;
 }
 
-export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValues }: Props) => {
+export const Parameters = ({
+  onSubmit,
+  error,
+  isLoading,
+  formValues,
+  setFormValues,
+  hasChanged = false,
+}: Props) => {
   const { t } = useTranslation();
 
   const handleInputChange =
@@ -37,6 +45,7 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
       <form
         className={styles.formFields}
         onSubmit={(e) => {
+          e.preventDefault();
           onSubmit();
         }}
       >
@@ -45,7 +54,7 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
           <input
             type="number"
             step="0.01"
-            min="0"
+            min="0.01"
             value={formValues.electricityCosts}
             onChange={handleInputChange('electricityCosts')}
             required
@@ -56,7 +65,7 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
           <input
             type="number"
             step="0.01"
-            min="0"
+            min="0.01"
             value={formValues.electricitySellingPrice}
             onChange={handleInputChange('electricitySellingPrice')}
             required
@@ -66,22 +75,10 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
           <span>{t('optimizer.parameters.currentCapacity')}</span>
           <input
             type="number"
-            min="0"
-            step="100"
+            min="0.1"
+            step="0.1"
             value={formValues.currentCapacity}
             onChange={handleInputChange('currentCapacity')}
-            required
-          />
-        </label>
-        <label className={styles.formField}>
-          <span>{t('optimizer.parameters.performanceRatio')}</span>
-          <input
-            type="number"
-            min="0"
-            max="1.2"
-            step="0.01"
-            value={formValues.performanceRatio}
-            onChange={handleInputChange('performanceRatio')}
             required
           />
         </label>
@@ -89,7 +86,7 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
           <span>{t('optimizer.parameters.reininvesttime')}</span>
           <input
             type="number"
-            min="0"
+            min="1"
             step="1"
             value={formValues.reininvesttime}
             onChange={handleInputChange('reininvesttime')}
@@ -100,7 +97,7 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
           <span>{t('optimizer.parameters.panelcost')}</span>
           <input
             type="number"
-            min="0"
+            min="0.1"
             step="0.1"
             value={formValues.panelcost}
             onChange={handleInputChange('panelcost')}
@@ -108,7 +105,7 @@ export const Parameters = ({ onSubmit, error, isLoading, formValues, setFormValu
           />
         </label>
         <div className={styles.runRow}>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || !hasChanged}>
             {isLoading ? t('optimizer.parameters.submitting') : t('optimizer.parameters.submit')}
           </Button>
           {error && <span className={styles.errorMessage}>{error}</span>}
