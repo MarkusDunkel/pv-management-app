@@ -150,7 +150,7 @@ const PanelSizeOptimizerPage = () => {
                 <p className="text-muted">{t('optimizer.slider.helper')}</p>
               </div>
               <div className={styles.sliderCard__number}>
-                <span>{result?.pvCapacities[selectedIndex] + ' W'}</span>
+                <span>{result?.pvCapacities[selectedIndex].toFixed(1) + ' W'}</span>
               </div>
             </div>
             <div className={styles.sliderRow}>
