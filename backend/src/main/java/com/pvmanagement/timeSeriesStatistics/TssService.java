@@ -16,7 +16,7 @@ public class TssService {
     public TssService() {}
 
     /**
-     * Computes the diurnal mean profile in 15-minute intervals.
+     * Computes the diurnal mean profile in kWh in 15-minute intervals.
      *
      * @param series array of Timeseries records
      * @return map of 15-minute interval (LocalTime) to average value (BigDecimal)
@@ -70,7 +70,7 @@ public class TssService {
 
             diurnalMean.add(DayTimeValue.builder()
                     .timestamp(t)
-                    .value(value)
+                    .value(value.multiply(new BigDecimal("0.00025")))
                     .build());
         }
 

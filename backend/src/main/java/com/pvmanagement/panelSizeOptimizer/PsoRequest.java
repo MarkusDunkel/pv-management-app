@@ -5,10 +5,10 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record PsoRequest(BigDecimal electricityCosts,
-        BigDecimal electricitySellingPrice,
-        BigDecimal currentCapacity,
-        BigDecimal performanceRatio,
-        int reininvesttime,
-        BigDecimal panelcost) {
+public record PsoRequest(String electricityCosts,
+        String electricitySellingPrice,
+        String currentCapacity,
+        String performanceRatio,
+        String reininvesttime,
+        String panelcost) {
 }

@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.pvmanagement.panelSizeOptimizer.PsoUtils.linearList;
 
@@ -30,21 +31,21 @@ public class PsoService {
     }
 
     public PsoResponse getPanelSizeOptimizationData(Long powerStationId, PsoRequest request) {
-        var electricityCosts = new BigDecimal("0.36"); // (€/kWh)
-        var electricitySellingPrice = new BigDecimal("0.10"); // (€/kWh)
-        var currentCapacity = new BigDecimal("7"); // kWp
-        var reininvesttime = new BigDecimal("25"); // years
-        var panelcost = new BigDecimal("2000"); // €/kWp
-
-        var r = new BigDecimal("1").divide(reininvesttime.multiply(new BigDecimal("365"))
+        var r = new BigDecimal("1").divide(new BigDecimal(request.reininvesttime()).multiply(new BigDecimal("365"))
                         .multiply(new BigDecimal("24")),
                 10,
                 RoundingMode.HALF_UP);
 
-        var pvCapacities = linearList(100,
+        var pvCapacitiesLinear = linearList(100,
                 0,
-                currentCapacity.doubleValue() * 6).stream()
+                new BigDecimal("42").doubleValue()).stream()
                 .map(BigDecimal::valueOf)
+                .toList();
+
+        var pvCapacities = Stream.concat(pvCapacitiesLinear.stream(),
+                        Stream.of(new BigDecimal(request.currentCapacity())))
+                .distinct()
+                .sorted()
                 .toList();
 
         var station = powerStationRepository.findById(powerStationId)
@@ -73,53 +74,68 @@ public class PsoService {
                         snapshot.getLoadW()))
                 .toList();
 
-        List<DayTimeValue> diurnalAggregatedProduction = tssService.computeDiurnalMeanProfile(productionHistory)
-                .stream()
-                .map(it -> DayTimeValue.builder()
-                        .value(it.value()
-                                .multiply(new BigDecimal("0.00025")))
-                        .timestamp(it.timestamp())
-                        .build())
-                .toList();
+        List<DayTimeValue> diurnalAggregatedProduction = tssService.computeDiurnalMeanProfile(productionHistory);
 
         var dailyMeanProduction = diurnalAggregatedProduction.stream()
                 .map(DayTimeValue::value)
                 .reduce(BigDecimal.ZERO,
                         BigDecimal::add);
 
-        var efficiencyFactor = dailyMeanProduction.divide(currentCapacity.multiply(new BigDecimal("24")),
-                6,
-                RoundingMode.HALF_UP);
-
-        List<DayTimeValue> diurnalAggregatedConsumption = tssService.computeDiurnalMeanProfile(consumptionHistory)
-                .stream()
+        var diurnalProductionProfile = diurnalAggregatedProduction.stream()
                 .map(it -> DayTimeValue.builder()
                         .value(it.value()
-                                .multiply(new BigDecimal("0.00025")))
+                                .multiply(new BigDecimal("4")))
                         .timestamp(it.timestamp())
                         .build())
                 .toList();
 
+        var efficiencyFactor = dailyMeanProduction.divide(new BigDecimal(request.currentCapacity()).multiply(new BigDecimal("24")),
+                6,
+                RoundingMode.HALF_UP);
+
+        List<DayTimeValue> diurnalAggregatedConsumption = tssService.computeDiurnalMeanProfile(consumptionHistory);
+
+        var diurnalConsumptionProfile = diurnalAggregatedConsumption.stream()
+                .map(it -> DayTimeValue.builder()
+                        .value(it.value()
+                                .multiply(new BigDecimal("4")))
+                        .timestamp(it.timestamp())
+                        .build())
+                .toList();
+
+        // value-true for intergrating over 15-minutes intervals
         var diurnalAggregatedProductions = pvCapacities.stream()
                 .map(targetCapacity -> diurnalAggregatedProduction.stream()
                         .map(it -> DayTimeValue.builder()
                                 .timestamp(it.timestamp())
                                 .value(it.value()
-                                        .multiply(targetCapacity.divide(currentCapacity,
+                                        .multiply(targetCapacity.divide(new BigDecimal(request.currentCapacity()),
                                                 10,
                                                 RoundingMode.HALF_UP)))
                                 .build())
                         .toList())
                 .toList();
 
-        var fitFactor = panelcost.divide(efficiencyFactor,
+        var diurnalProductionProfiles = pvCapacities.stream()
+                .map(targetCapacity -> diurnalProductionProfile.stream()
+                        .map(it -> DayTimeValue.builder()
+                                .timestamp(it.timestamp())
+                                .value(it.value()
+                                        .multiply(targetCapacity.divide(new BigDecimal(request.currentCapacity()),
+                                                10,
+                                                RoundingMode.HALF_UP)))
+                                .build())
+                        .toList())
+                .toList();
+
+        var fitFactor = new BigDecimal(request.panelcost()).divide(efficiencyFactor,
                         10,
                         RoundingMode.HALF_UP)
                 .multiply(r);
 
-        var excessFactor = fitFactor.subtract(electricitySellingPrice);
+        var excessFactor = fitFactor.subtract(new BigDecimal(request.electricitySellingPrice()));
 
-        var lackFactor = electricityCosts;
+        var lackFactor = new BigDecimal(request.electricityCosts());
 
         var fits = diurnalAggregatedProductions.stream()
                 .map(productionProfile -> {
@@ -235,18 +251,16 @@ public class PsoService {
                         .add(lackAmounts.get(i)))
                 .toList();
 
-        PsoResponse result = PsoResponse.builder()
-                .diurnalAggregatedConsumption(diurnalAggregatedConsumption)
-                .diurnalAggregatedProductions(diurnalAggregatedProductions)
+        return PsoResponse.builder()
+                .diurnalConsumptionProfile(diurnalConsumptionProfile)
+                .diurnalProductionProfiles(diurnalProductionProfiles)
                 .fitAmounts(fitAmounts)
                 .excessAmounts(excessAmounts)
                 .lackAmounts(lackAmounts)
                 .totalAmounts(totalAmounts)
                 .pvCapacities(pvCapacities)
+                .request(request)
                 .build();
-
-        return result;
-
     }
 
 
