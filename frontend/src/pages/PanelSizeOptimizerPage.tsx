@@ -5,6 +5,7 @@ import {
 } from '@/api/optimizations';
 import { TopBar } from '@/components/layout/TopBar';
 import { InfoDialog } from '@/components/InfoDialog';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { DiurnalProfile } from '@/components/optimizerPage/DiurnalProfile';
 import { Parameters } from '@/components/optimizerPage/Parameters';
 import { PerformanceChart } from '@/components/optimizerPage/PerformanceChart';
@@ -99,12 +100,33 @@ const PanelSizeOptimizerPage = () => {
   const accordionItems = [
     {
       value: 'diurnal',
-      title: t('optimizer.accordion.diurnal'),
+      title: (
+        <div className="flex items-center gap-2">
+          <span>{t('optimizer.accordion.diurnal')}</span>
+          <InfoTooltip
+            content={t('optimizer.diurnalProfile.desc')}
+            buttonAriaLabel={t('optimizer.diurnalProfile.infoAria')}
+            iconClassName="h-6 w-6"
+            side="bottom"
+          />
+        </div>
+      ),
       content: result ? <DiurnalProfile data={result} activeIndex={selectedIndex} /> : null,
     },
     {
       value: 'performance',
-      title: t('optimizer.accordion.performance'),
+      title: (
+        <div className="flex items-center gap-2">
+          <span>{t('optimizer.accordion.performance')}</span>
+          <InfoTooltip
+            content={t('optimizer.performanceGraph.desc')}
+            buttonAriaLabel={t('optimizer.diurnalProfile.infoAria')}
+            iconClassName="h-6 w-6"
+            side="bottom"
+          />
+        </div>
+      ),
+
       content: result ? <PerformanceChart data={result} activeIndex={selectedIndex} /> : null,
     },
   ];
@@ -147,7 +169,9 @@ const PanelSizeOptimizerPage = () => {
                 <p className="text-muted">{t('optimizer.slider.helper')}</p>
               </div>
               <div className={styles.sliderCard__number}>
-                <span>{result?.pvCapacities[selectedIndex].toFixed(1) + ' kW'}</span>
+                {result?.pvCapacities && (
+                  <span>{result?.pvCapacities[selectedIndex].toFixed(1) + ' kW'}</span>
+                )}
               </div>
             </div>
             <div className={styles.sliderRow}>

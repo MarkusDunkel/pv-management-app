@@ -107,8 +107,9 @@ const resources = {
     'optimizer.error.generic': 'Unable to run the optimization right now.',
     'optimizer.diurnalProfile.desc':
       'Diurnal energy production and consumption profile in kWh, showing mean values over 15-minute intervals.',
+    'optimizer.diurnalProfile.infoAria': 'Show diurnal profile details',
     'optimizer.performanceGraph.desc':
-      'Total costs and their contributors in € as a function of the PV system size. The global minimum of the total curve indicates the optimal system size.',
+      'Total costs and their contributors in €/day as a function of the PV system size. The global minimum of the total curve indicates the optimal system size.',
   },
   de: {
     'app.loadingDashboard': 'Dashboard wird geladen...',
@@ -218,8 +219,9 @@ const resources = {
     'optimizer.error.generic': 'Optimierung konnte nicht gestartet werden.',
     'optimizer.diurnalProfile.desc':
       'Tagesprofil der Energieerzeugung und -verbräuche in kWh, das Mittelwerte über 15-Minuten-Intervalle zeigt.',
+    'optimizer.diurnalProfile.infoAria': 'Details zum Tagesprofil anzeigen',
     'optimizer.performanceGraph.desc':
-      'Gesamtkosten und ihre Beitragskomponenten in € in Abhängigkeit von der Größe der PV-Anlage. Das globale Minimum der Gesamtkurve zeigt die optimale Anlagengröße an.',
+      'Gesamtkosten und ihre Beitragskomponenten in €/Tag in Abhängigkeit von der Größe der PV-Anlage. Das globale Minimum der Gesamtkurve zeigt die optimale Anlagengröße an.',
   },
 } as const satisfies Record<Language, Record<string, string>>;
 
