@@ -1,10 +1,10 @@
 version: "3.9"
 
 services:
-  # === Reverse proxy / TLS terminator ===
+  # === Reverse proxy / TLS terminator (unchanged, just extended for staging later) ===
   traefik:
     image: traefik:v3.1
-    container_name: traefik
+    container_name: homewatts-traefik
     restart: unless-stopped
     command:
       # Discover Docker services
@@ -41,15 +41,18 @@ services:
     labels:
       - "traefik.enable=true"
 
+  # === Shared Postgres instance: prod + staging + cache ===
   db:
-    image: postgres:15
+    image: postgres:16
+    container_name: homewatts-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-pv_management}
-      POSTGRES_USER: ${DB_USERNAME:-pv_app}
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: postgres   # default DB; our init script creates the others
     volumes:
-      - /mnt/db/postgres:/var/lib/postgresql/data
+      - /mnt/db/postgres_v1:/var/lib/postgresql/data
+      - /infrastructure/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1" ]
       interval: 5s
@@ -59,8 +62,10 @@ services:
     networks:
       - appnet
 
-  backend:
-    image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+  # === PROD BACKEND ===
+  backend_prod:
+    image: ghcr.io/MarkusDunkel/homewatts-backend:${IMAGE_TAG_PROD}
+    container_name: homewatts-prod-be
     restart: unless-stopped
     depends_on:
       db:
@@ -68,11 +73,20 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       JAVA_TOOL_OPTIONS: "-Dspring.profiles.active=prod"
+
       SERVER_ADDRESS: "0.0.0.0"
       SERVER_PORT: "8080"
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-pv_management}
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-pv_app}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-pv_app}
+
+      # App DB (prod)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_prod
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      # Shared cache DB
+      CACHE_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_cache
+      CACHE_DATASOURCE_USERNAME: ${DB_USERNAME}
+      CACHE_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}
       SEMS_PASSWORD: ${SEMS_PASSWORD}
       SEMS_STATION_ID: ${SEMS_STATION_ID}
@@ -84,53 +98,118 @@ services:
       - "8080"
     networks:
       - appnet
-    # no labels => not exposed publicly
+    # internal only (no traefik labels; frontend talks to it)
 
-  frontend:
-    image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/frontend:latest
+  # === STAGING BACKEND ===
+  backend_staging:
+    image: ghcr.io/MarkusDunkel/homewatts-backend:${IMAGE_TAG_STAGING}
+    container_name: homewatts-staging-be
     restart: unless-stopped
     depends_on:
-      - backend
-    # IMPORTANT: remove host port publishing; Traefik owns :80/:443 on the host
-    # ports:
-    #   - "80:80"
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: staging
+      JAVA_TOOL_OPTIONS: "-Dspring.profiles.active=staging"
+
+      SERVER_ADDRESS: "0.0.0.0"
+      SERVER_PORT: "8080"
+
+      # App DB (staging)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_staging
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      # Shared cache DB
+      CACHE_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_cache
+      CACHE_DATASOURCE_USERNAME: ${DB_USERNAME}
+      CACHE_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      SEMS_ACCOUNT: ${SEMS_ACCOUNT}
+      SEMS_PASSWORD: ${SEMS_PASSWORD}
+      SEMS_STATION_ID: ${SEMS_STATION_ID}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:-admin@example.com}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD}
+      DEMO_SECRET: ${DEMO_SECRET}
+    expose:
+      - "8080"
+    networks:
+      - appnet
+
+  # === PROD FRONTEND ===
+  frontend_prod:
+    image: ghcr.io/MarkusDunkel/homewatts-frontend:${IMAGE_TAG_PROD}
+    container_name: homewatts-prod-fe
+    restart: unless-stopped
+    depends_on:
+      - backend_prod
     networks:
       - appnet
     labels:
       - "traefik.enable=true"
 
-      # Route HTTPS traffic for your host to this service
-      - "traefik.http.routers.front.rule=Host(`${APP_HOST}`)"
-      - "traefik.http.routers.front.entrypoints=websecure"
-      - "traefik.http.routers.front.tls=true"
-      - "traefik.http.routers.front.tls.certresolver=le"
+      # Prod host
+      - "traefik.http.routers.front-prod.rule=Host(`${APP_HOST}`)"
+      - "traefik.http.routers.front-prod.entrypoints=websecure"
+      - "traefik.http.routers.front-prod.tls=true"
+      - "traefik.http.routers.front-prod.tls.certresolver=le"
 
-      # If the container does NOT listen on 80 internally, uncomment and set the correct port:
-      # - "traefik.http.services.front.loadbalancer.server.port=80"
+      # If the container does NOT listen on 80 internally, set explicit port:
+      # - "traefik.http.services.front-prod.loadbalancer.server.port=80"
 
-      # Security headers (adjust as needed)
+      # Security headers (same as before)
       - "traefik.http.middlewares.sec-headers.headers.stsSeconds=31536000"
       - "traefik.http.middlewares.sec-headers.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.sec-headers.headers.stsPreload=true"
       - "traefik.http.middlewares.sec-headers.headers.contentTypeNosniff=true"
       - "traefik.http.middlewares.sec-headers.headers.frameDeny=true"
       - "traefik.http.middlewares.sec-headers.headers.referrerPolicy=no-referrer"
-      - "traefik.http.routers.front.middlewares=sec-headers@docker"
+      - "traefik.http.routers.front-prod.middlewares=sec-headers@docker"
 
+  # === STAGING FRONTEND ===
+  frontend_staging:
+    image: ghcr.io/MarkusDunkel/homewatts-frontend:${IMAGE_TAG_STAGING}
+    container_name: homewatts-staging-fe
+    restart: unless-stopped
+    depends_on:
+      - backend_staging
+    networks:
+      - appnet
+    labels:
+      - "traefik.enable=true"
+
+      # Staging host (e.g. staging.yourdomain.tld)
+      - "traefik.http.routers.front-staging.rule=Host(`${APP_HOST_STAGING}`)"
+      - "traefik.http.routers.front-staging.entrypoints=websecure"
+      - "traefik.http.routers.front-staging.tls=true"
+      - "traefik.http.routers.front-staging.tls.certresolver=le"
+
+      # - "traefik.http.services.front-staging.loadbalancer.server.port=80"
+
+      - "traefik.http.routers.front-staging.middlewares=sec-headers@docker"
+
+  # === COLLECTOR ===
   collector:
-    image: europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+    image: ghcr.io/MarkusDunkel/homewatts-backend:${IMAGE_TAG_COLLECTOR:-${IMAGE_TAG_PROD}}
+    container_name: homewatts-collector
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
     environment:
       SPRING_PROFILES_ACTIVE: collector
       JAVA_TOOL_OPTIONS: "-Dspring.profiles.active=collector"
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-pv_management}
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-pv_app}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-pv_app}
+
+      # Collector ONLY talks to the cache DB
+      CACHE_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_cache
+      CACHE_DATASOURCE_USERNAME: ${DB_USERNAME}
+      CACHE_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      # External API credentials (collector will use these to fetch)
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}
       SEMS_PASSWORD: ${SEMS_PASSWORD}
       SEMS_STATION_ID: ${SEMS_STATION_ID}
+
     stop_grace_period: "30s"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/actuator/health || exit 1"]
@@ -140,7 +219,8 @@ services:
       start_period: 15s
     networks:
       - appnet
-    # internal only (no labels)
+    # no traefik labels => not exposed publicly
+
 
 networks:
   appnet:

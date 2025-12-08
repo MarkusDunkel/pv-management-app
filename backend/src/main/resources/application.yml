@@ -1,10 +1,6 @@
 spring:
   application:
     name: pv-management-backend
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pv_management}
-    username: ${DB_USERNAME:pv_app}
-    password: ${DB_PASSWORD:pv_app}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -12,6 +8,13 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
+
+  cache:
+    datasource:
+      url: ${CACHE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/homewatts_cache}
+      username: ${CACHE_DATASOURCE_USERNAME}
+      password: ${CACHE_DATASOURCE_PASSWORD}
+
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
