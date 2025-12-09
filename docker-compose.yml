@@ -64,7 +64,7 @@ services:
 
   # === PROD BACKEND ===
   backend_prod:
-    image: ghcr.io/MarkusDunkel/homewatts-backend:${IMAGE_TAG_PROD}
+    image: ghcr.io/markusdunkel/homewatts-backend:${IMAGE_TAG_PROD}
     container_name: homewatts-prod-be
     restart: unless-stopped
     depends_on:
@@ -102,7 +102,7 @@ services:
 
   # === STAGING BACKEND ===
   backend_staging:
-    image: ghcr.io/MarkusDunkel/homewatts-backend:${IMAGE_TAG_STAGING}
+    image: ghcr.io/markusdunkel/homewatts-backend:${IMAGE_TAG_STAGING}
     container_name: homewatts-staging-be
     restart: unless-stopped
     depends_on:
@@ -139,8 +139,11 @@ services:
 
   # === PROD FRONTEND ===
   frontend_prod:
-    image: ghcr.io/MarkusDunkel/homewatts-frontend:${IMAGE_TAG_PROD}
+    image: ghcr.io/markusdunkel/homewatts-frontend:${IMAGE_TAG_PROD}
     container_name: homewatts-prod-fe
+    environment:
+      BACKEND_HOST: backend_prod
+      BACKEND_PORT: 8080
     restart: unless-stopped
     depends_on:
       - backend_prod
@@ -169,8 +172,11 @@ services:
 
   # === STAGING FRONTEND ===
   frontend_staging:
-    image: ghcr.io/MarkusDunkel/homewatts-frontend:${IMAGE_TAG_STAGING}
+    image: ghcr.io/markusdunkel/homewatts-frontend:${IMAGE_TAG_STAGING}
     container_name: homewatts-staging-fe
+    environment:
+      BACKEND_HOST: backend_staging
+      BACKEND_PORT: 8080
     restart: unless-stopped
     depends_on:
       - backend_staging
@@ -191,7 +197,7 @@ services:
 
   # === COLLECTOR ===
   collector:
-    image: ghcr.io/MarkusDunkel/homewatts-backend:${IMAGE_TAG_COLLECTOR:-${IMAGE_TAG_PROD}}
+    image: ghcr.io/markusdunkel/homewatts-backend:${IMAGE_TAG_COLLECTOR:-${IMAGE_TAG_PROD}}
     container_name: homewatts-collector
     restart: unless-stopped
     depends_on:

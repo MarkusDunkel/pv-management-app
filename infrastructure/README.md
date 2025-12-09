@@ -187,10 +187,12 @@ This updates your Docker config so you can push images securely to Google.
 ---
 
 ### **2. Build your image**
-From the root of your project (where your `Dockerfile` is located):
+From the root of your project (where your `Dockerfile` is located). Select as TAG either prod or staging:
 
 ```bash
-docker build --no-cache -t europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest .
+TAG=prod
+
+docker build --no-cache -t ghcr.io/markusdunkel/homewatts-backend:${TAG} .
 ```
 
 📝 **Tip:** You can change `latest` to a version tag (like `v1.0.0`) for better version tracking later.
@@ -198,8 +200,15 @@ docker build --no-cache -t europe-west1-docker.pkg.dev/pv-management-app/pv-mana
 ---
 
 ### **3. Push the image to Artifact Registry**
+Make sure you’re logged in once:
+
 ```bash
-docker push europe-west1-docker.pkg.dev/pv-management-app/pv-management-app-repo/backend:latest
+echo "$GHCR_PAT" | docker login ghcr.io -u MarkusDunkel --password-stdin
+```
+then
+
+```bash
+docker push ghcr.io/markusdunkel/homewatts-backend:${TAG}
 ```
 
 You should see output like:
