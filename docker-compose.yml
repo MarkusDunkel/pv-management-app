@@ -51,14 +51,16 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: postgres   # default DB; our init script creates the others
     volumes:
-      - /mnt/db/postgres_v1:/var/lib/postgresql/data
-      - /infrastructure/postgres:/docker-entrypoint-initdb.d:ro
+      - ./mnt/db/postgres_v1:/var/lib/postgresql/data
+      - ./infrastructure/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1" ]
       interval: 5s
       timeout: 3s
       retries: 20
       start_period: 20s
+    ports:
+      - "5432:5432"
     networks:
       - appnet
 
@@ -207,9 +209,9 @@ services:
       JAVA_TOOL_OPTIONS: "-Dspring.profiles.active=collector"
 
       # Collector ONLY talks to the cache DB
-      CACHE_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_cache
-      CACHE_DATASOURCE_USERNAME: ${DB_USERNAME}
-      CACHE_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_cache
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
 
       # External API credentials (collector will use these to fetch)
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}

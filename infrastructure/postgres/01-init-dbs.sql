@@ -1,26 +1,26 @@
 -- 01-init-dbs.sql
 -- Initializes multi-DB setup:
---   - pvmanager_prod     (production app data)
---   - pvmanager_staging  (staging app data)
---   - pvmanager_cache    (shared cache for external API responses)
+--   - homewatts_prod     (production app data)
+--   - homewatts_staging  (staging app data)
+--   - homewatts_cache    (shared cache for external API responses)
 --
 -- This file merges the old V1__init_schema.sql, V2__add_refresh_tokens.sql,
 -- and V3__demo_access.sql into a single init script, applied to both
--- pvmanager_prod and pvmanager_staging, and adds the cache schema.
+-- homewatts_prod and homewatts_staging, and adds the cache schema.
 
 ------------------------------------------------------------
 -- 0. Create logical databases
 ------------------------------------------------------------
 
-CREATE DATABASE pvmanager_prod;
-CREATE DATABASE pvmanager_staging;
-CREATE DATABASE pvmanager_cache;
+CREATE DATABASE homewatts_prod;
+CREATE DATABASE homewatts_staging;
+CREATE DATABASE homewatts_cache;
 
 ------------------------------------------------------------
--- 1. Schema for pvmanager_prod
+-- 1. Schema for homewatts_prod
 ------------------------------------------------------------
 
-\connect pvmanager_prod
+\connect homewatts_prod
 
 -- === Base schema (from V1__init_schema.sql) ===
 
@@ -148,11 +148,11 @@ CREATE INDEX IF NOT EXISTS idx_demo_redemptions_key_ts
 INSERT INTO roles (name) VALUES ('ROLE_DEMO') ON CONFLICT DO NOTHING;
 
 ------------------------------------------------------------
--- 2. Schema for pvmanager_staging
+-- 2. Schema for homewatts_staging
 --    (same app schema as prod)
 ------------------------------------------------------------
 
-\connect pvmanager_staging
+\connect homewatts_staging
 
 -- === Base schema (from V1__init_schema.sql) ===
 
@@ -280,10 +280,10 @@ CREATE INDEX IF NOT EXISTS idx_demo_redemptions_key_ts
 INSERT INTO roles (name) VALUES ('ROLE_DEMO') ON CONFLICT DO NOTHING;
 
 ------------------------------------------------------------
--- 3. Schema for pvmanager_cache
+-- 3. Schema for homewatts_cache
 ------------------------------------------------------------
 
-\connect pvmanager_cache
+\connect homewatts_cache
 
 -- Shared cache table for external API responses, used by both prod & staging.
 
