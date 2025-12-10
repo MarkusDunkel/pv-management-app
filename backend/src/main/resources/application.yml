@@ -32,7 +32,7 @@ logging:
 
 cache:
   datasource:
-    url: ${CACHE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/homewatts_cache}
+    url: jdbc:postgresql://localhost:5432/homewatts_cache
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 

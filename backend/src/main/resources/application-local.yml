@@ -6,12 +6,6 @@ spring:
   jpa:
     show-sql: true
 
-cache:
-  datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/homewatts_cache
-    username: ${CACHE_DATASOURCE_USERNAME:${DB_USERNAME}}
-    password: ${CACHE_DATASOURCE_PASSWORD:${DB_PASSWORD}}
-
 logging:
   level:
     com.pvmanagement: DEBUG
