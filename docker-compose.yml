@@ -213,6 +213,10 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
 
+      CACHE_DATASOURCE_URL: jdbc:postgresql://db:5432/homewatts_cache
+      CACHE_DATASOURCE_USERNAME: ${DB_USERNAME}
+      CACHE_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
       # External API credentials (collector will use these to fetch)
       SEMS_ACCOUNT: ${SEMS_ACCOUNT}
       SEMS_PASSWORD: ${SEMS_PASSWORD}

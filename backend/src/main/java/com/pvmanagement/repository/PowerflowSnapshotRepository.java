@@ -13,4 +13,5 @@ public interface PowerflowSnapshotRepository extends JpaRepository<PowerflowSnap
     List<PowerflowSnapshot> findByPowerStationAndPowerflowTimestampBetweenOrderByPowerflowTimestampAsc(PowerStation powerStation,
                                                                                    OffsetDateTime from,
                                                                                    OffsetDateTime to);
+    boolean existsByPowerStationAndPowerflowTimestamp(PowerStation powerStation, OffsetDateTime powerflowTimestamp);
 }

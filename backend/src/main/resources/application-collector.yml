@@ -5,6 +5,11 @@ spring:
     web-application-type: none
     banner-mode: off
 
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/homewatts_cache
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
   # turn ON scheduling for the collector
   task:
     scheduling:
@@ -19,6 +24,12 @@ spring:
   # the collector shouldn't run Flyway migrations; let the backend own them
   flyway:
     enabled: false
+
+cache:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/homewatts_cache
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 # minimal actuator on its own port so compose can healthcheck it
 management:
@@ -44,6 +55,3 @@ logging:
 # optional feature flag if you guarded your collector code with @ConditionalOnProperty
 ingestion:
   enabled: true
-
-# SEMS config still comes from application.yml/env; nothing special needed here
-# sems.* values inherit from application.yml (and your env)

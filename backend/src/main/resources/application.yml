@@ -9,12 +9,6 @@ spring:
         format_sql: true
     open-in-view: false
 
-  cache:
-    datasource:
-      url: ${CACHE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/homewatts_cache}
-      username: ${CACHE_DATASOURCE_USERNAME}
-      password: ${CACHE_DATASOURCE_PASSWORD}
-
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
@@ -36,6 +30,12 @@ logging:
     org.springframework.security: DEBUG
     com.pvmanagement.security: DEBUG
 
+cache:
+  datasource:
+    url: ${CACHE_DATASOURCE_URL:jdbc:postgresql://localhost:5432/homewatts_cache}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
 app:
   jwt:
     secret: ${JWT_SECRET}
@@ -47,6 +47,10 @@ app:
     session-max-age-hours: ${DEMO_SESSION_MAX_AGE_HOURS:6}
     default-max-activations: ${DEMO_DEFAULT_MAX_ACTIVATIONS:1000}
     key-valid-days: ${DEMO_KEY_VALID_DAYS:180}
+  ingestion:
+    enabled: true
+    interval: PT5M
+    cursor-id: cache_ingestion_global
 
 sems:
   base-url: ${SEMS_BASE_URL:https://eu.semsportal.com/api/v2}

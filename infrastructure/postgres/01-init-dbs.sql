@@ -62,6 +62,9 @@ CREATE TABLE powerflow_snapshot (
     soc_percent NUMERIC(6,3)
 );
 
+ALTER TABLE powerflow_snapshot
+    ADD CONSTRAINT uq_powerflow_station_time UNIQUE (powerstation_id, powerflow_timestamp);
+
 CREATE INDEX idx_powerflow_snapshot_station_time
     ON powerflow_snapshot(powerstation_id, powerflow_timestamp);
 
@@ -93,6 +96,11 @@ CREATE TABLE sem_sync_log (
     last_success_at TIMESTAMPTZ,
     status VARCHAR(32),
     message TEXT
+);
+
+CREATE TABLE ingestion_state (
+    id TEXT PRIMARY KEY,
+    last_fetched_at TIMESTAMPTZ
 );
 
 INSERT INTO roles (name) VALUES ('ROLE_USER') ON CONFLICT DO NOTHING;
@@ -194,6 +202,9 @@ CREATE TABLE powerflow_snapshot (
     soc_percent NUMERIC(6,3)
 );
 
+ALTER TABLE powerflow_snapshot
+    ADD CONSTRAINT uq_powerflow_station_time UNIQUE (powerstation_id, powerflow_timestamp);
+
 CREATE INDEX idx_powerflow_snapshot_station_time
     ON powerflow_snapshot(powerstation_id, powerflow_timestamp);
 
@@ -225,6 +236,11 @@ CREATE TABLE sem_sync_log (
     last_success_at TIMESTAMPTZ,
     status VARCHAR(32),
     message TEXT
+);
+
+CREATE TABLE ingestion_state (
+    id TEXT PRIMARY KEY,
+    last_fetched_at TIMESTAMPTZ
 );
 
 INSERT INTO roles (name) VALUES ('ROLE_USER') ON CONFLICT DO NOTHING;
@@ -294,7 +310,7 @@ CREATE TABLE external_api_cache (
   status_code   INT,
   error_message TEXT,
   fetched_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  ttl_seconds   INT NOT NULL DEFAULT 3600
+  ttl_seconds   INT NOT NULL DEFAULT 300
 );
 
 -- UNIQUE constraint on cache_key already creates an index in Postgres,
