@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@Profile({"collector", "local"})
+@Profile({"collector"})
 @Component
 public class SemSyncScheduler {
 
@@ -19,7 +19,7 @@ public class SemSyncScheduler {
         this.semSyncService = semSyncService;
     }
 
-    @Scheduled(fixedDelayString = "${sems.refresh-interval-ms:180000}")
+    @Scheduled(fixedDelayString = "${sems.refresh-interval-ms}")
     public void refreshData() {
         try {
             semSyncService.triggerSync();
