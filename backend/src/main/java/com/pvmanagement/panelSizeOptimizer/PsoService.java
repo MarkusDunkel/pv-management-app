@@ -1,7 +1,7 @@
 package com.pvmanagement.panelSizeOptimizer;
 
-import com.pvmanagement.repository.PowerStationRepository;
-import com.pvmanagement.repository.PowerflowSnapshotRepository;
+import com.pvmanagement.monitoring.infra.PowerStationRepository;
+import com.pvmanagement.monitoring.infra.PowerflowSnapshotRepository;
 import com.pvmanagement.timeSeriesStatistics.DayTimeValue;
 import com.pvmanagement.timeSeriesStatistics.TimeValue;
 import com.pvmanagement.timeSeriesStatistics.TssService;

@@ -72,7 +72,7 @@ resilience4j.retry:
       maxWaitDuration: 15s
       randomizedWait: 500ms         # jitter
       retryExceptions:
-        - com.pvmanagement.sems.exception.TransientUpstreamException
+        - com.pvmanagement.integration.sems.infra.TransientUpstreamException
       ignoreExceptions:
-        - com.pvmanagement.sems.exception.AuthorizationExpiredException
-        - com.pvmanagement.sems.exception.UpstreamDataMissingException
+        - com.pvmanagement.auth.infra.AuthorizationExpiredException
+        - com.pvmanagement.integration.sems.infra.UpstreamDataMissingException

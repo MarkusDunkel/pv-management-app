@@ -1,0 +1,127 @@
+package com.pvmanagement.auth.app;
+
+import com.pvmanagement.auth.domain.AuthResult;
+import com.pvmanagement.auth.infra.JwtService;
+import com.pvmanagement.auth.domain.RefreshToken;
+import com.pvmanagement.identity.domain.RoleName;
+import com.pvmanagement.identity.domain.UserAccount;
+import com.pvmanagement.auth.domain.AuthRequest;
+import com.pvmanagement.auth.domain.AuthResponse;
+import com.pvmanagement.auth.domain.RegisterRequest;
+import com.pvmanagement.identity.domain.UserProfileDto;
+import com.pvmanagement.identity.infra.RoleRepository;
+import com.pvmanagement.identity.infra.UserAccountRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@Service
+public class AuthService {
+
+    private final UserAccountRepository userAccountRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
+
+    public AuthService(UserAccountRepository userAccountRepository,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService,
+                       AuthenticationManager authenticationManager,
+                       RefreshTokenService refreshTokenService) {
+        this.userAccountRepository = userAccountRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        this.refreshTokenService = refreshTokenService;
+    }
+
+    @Transactional
+    public AuthResult register(RegisterRequest request) {
+        if (userAccountRepository.existsByEmail(request.email())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
+        var user = new UserAccount();
+        user.setEmail(request.email().toLowerCase());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setDisplayName(request.displayName());
+
+        var role = roleRepository.findByName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new IllegalStateException("ROLE_USER not seeded"));
+
+        user.getRoles().add(role);
+        var saved = userAccountRepository.save(user);
+
+        return buildAuthResult(saved);
+    }
+
+    @Transactional
+    public AuthResult login(AuthRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        var user = userAccountRepository.findByEmail(request.email().toLowerCase())
+                .orElseThrow(() -> new IllegalStateException("User not found after authentication"));
+        return buildAuthResult(user);
+    }
+
+    public UserProfileDto profile(String email) {
+        var user = userAccountRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        var roles = user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toSet());
+        return new UserProfileDto(user.getId(), user.getEmail(), user.getDisplayName(), user.isEnabled(),
+                user.isEmailVerified(), user.getCreatedAt(), roles);
+    }
+
+    @Transactional
+    public AuthResult refresh(String refreshTokenValue) {
+        var newRefreshToken = refreshTokenService.rotate(refreshTokenValue);
+        var user = newRefreshToken.getUser();
+        return buildAuthResult(user, newRefreshToken);
+    }
+
+    @Transactional
+    public void logout(String refreshTokenValue) {
+        if (refreshTokenValue != null) {
+            refreshTokenService.revoke(refreshTokenValue);
+        }
+        SecurityContextHolder.clearContext();
+    }
+
+    @Transactional
+    public AuthResult issueTokensForUser(UserAccount user) {
+        return buildAuthResult(user);
+    }
+
+    private AuthResult buildAuthResult(UserAccount user) {
+        var refreshToken = refreshTokenService.createForUser(user);
+        return buildAuthResult(user, refreshToken);
+    }
+
+    private AuthResult buildAuthResult(UserAccount user, RefreshToken refreshToken) {
+        var roles = user.getRoles().stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toSet());
+        user.setLastLoginAt(OffsetDateTime.now());
+        String token = jwtService.generateToken(user.getEmail(), roles, Map.of("displayName", user.getDisplayName()));
+        Instant expiresAt = jwtService.extractExpiry(token);
+        var authResponse = new AuthResponse(token, expiresAt, roles, user.getDisplayName(), user.getEmail());
+        return new AuthResult(authResponse, refreshToken);
+    }
+}
